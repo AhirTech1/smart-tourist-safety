@@ -1,6 +1,6 @@
 name: smart_tourist_safety_app
 description: "A new Flutter project."
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none'
 
 version: 1.0.0+1
 
@@ -10,17 +10,26 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations: 
+    sdk: flutter 
+  intl: ^0.20.2
   cupertino_icons: ^1.0.6
-  google_fonts: ^6.2.1 # For custom fonts
-  flutter_svg: ^2.0.10+1 # For using SVG assets
-  http: ^1.2.1 # For making API calls
+  google_fonts: ^6.2.1
+  flutter_svg: ^2.0.10+1
+  http: ^1.2.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: ^6.0.0
+  intl_translation: ^0.20.1
+  flutter_gen: ^5.4.0
 
 flutter:
   uses-material-design: true
   assets:
-    - assets/ # Add this line to include the assets directory
+    - assets/
+  generate: true  # <- This must be properly indented under 'flutter'
+
+flutter-gen:
+  output: lib/gen/

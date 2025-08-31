@@ -49,11 +49,10 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SvgPicture.asset(
-                  'assets/logo.svg',
+                Image.asset(
+                  'assets/2.png',
                   height: 100,
                   width: 100,
-                  colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
                 ),
                 const SizedBox(height: 20),
                 Text(

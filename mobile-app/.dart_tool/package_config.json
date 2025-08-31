@@ -2,6 +2,24 @@
   "configVersion": 2,
   "packages": [
     {
+      "name": "_fe_analyzer_shared",
+      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/_fe_analyzer_shared-67.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "analyzer",
+      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/analyzer-6.4.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "archive",
+      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/archive-4.0.7",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "args",
       "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/args-2.7.0",
       "packageUri": "lib/",
@@ -38,6 +56,18 @@
       "languageVersion": "3.4"
     },
     {
+      "name": "color",
+      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/color-3.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "convert",
+      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/convert-3.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
       "name": "crypto",
       "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/crypto-3.0.6",
       "packageUri": "lib/",
@@ -48,6 +78,18 @@
       "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/cupertino_icons-1.0.8",
       "packageUri": "lib/",
       "languageVersion": "3.1"
+    },
+    {
+      "name": "dart_style",
+      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/dart_style-2.3.6",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "dartx",
+      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/dartx-1.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "fake_async",
@@ -62,16 +104,40 @@
       "languageVersion": "3.7"
     },
     {
+      "name": "file",
+      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/file-7.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "flutter",
       "rootUri": "file:///home/ghost/snap/flutter/common/flutter/packages/flutter",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
     {
-      "name": "flutter_lints",
-      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/flutter_lints-3.0.2",
+      "name": "flutter_gen",
+      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/flutter_gen-5.9.0",
       "packageUri": "lib/",
-      "languageVersion": "3.1"
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "flutter_gen_core",
+      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/flutter_gen_core-5.9.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "flutter_lints",
+      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/flutter_lints-6.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.8"
+    },
+    {
+      "name": "flutter_localizations",
+      "rootUri": "file:///home/ghost/snap/flutter/common/flutter/packages/flutter_localizations",
+      "packageUri": "lib/",
+      "languageVersion": "3.8"
     },
     {
       "name": "flutter_svg",
@@ -86,10 +152,22 @@
       "languageVersion": "3.8"
     },
     {
+      "name": "glob",
+      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/glob-2.1.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
       "name": "google_fonts",
       "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/google_fonts-6.3.1",
       "packageUri": "lib/",
       "languageVersion": "3.7"
+    },
+    {
+      "name": "hashcodes",
+      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/hashcodes-2.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "http",
@@ -102,6 +180,30 @@
       "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/http_parser-4.1.2",
       "packageUri": "lib/",
       "languageVersion": "3.4"
+    },
+    {
+      "name": "image_size_getter",
+      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/image_size_getter-2.4.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "intl",
+      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/intl-0.20.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "intl_translation",
+      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/intl_translation-0.20.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "json_annotation",
+      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/json_annotation-4.9.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
     },
     {
       "name": "leak_tracker",
@@ -123,9 +225,9 @@
     },
     {
       "name": "lints",
-      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/lints-3.0.0",
+      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/lints-6.0.0",
       "packageUri": "lib/",
-      "languageVersion": "3.0"
+      "languageVersion": "3.8"
     },
     {
       "name": "matcher",
@@ -144,6 +246,18 @@
       "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/meta-1.16.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
+    },
+    {
+      "name": "mime",
+      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/mime-2.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "package_config",
+      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/package_config-2.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
     },
     {
       "name": "path",
@@ -212,6 +326,18 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "posix",
+      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/posix-6.0.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "pub_semver",
+      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/pub_semver-2.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
       "name": "sky_engine",
       "rootUri": "file:///home/ghost/snap/flutter/common/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
@@ -254,6 +380,12 @@
       "languageVersion": "3.5"
     },
     {
+      "name": "time",
+      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/time-2.1.5",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "typed_data",
       "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/typed_data-1.4.0",
       "packageUri": "lib/",
@@ -290,6 +422,12 @@
       "languageVersion": "3.5"
     },
     {
+      "name": "watcher",
+      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/watcher-1.1.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.1"
+    },
+    {
       "name": "web",
       "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/web-1.1.1",
       "packageUri": "lib/",
@@ -306,6 +444,12 @@
       "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/xml-6.6.1",
       "packageUri": "lib/",
       "languageVersion": "3.8"
+    },
+    {
+      "name": "yaml",
+      "rootUri": "file:///home/ghost/.pub-cache/hosted/pub.dev/yaml-3.1.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
     },
     {
       "name": "smart_tourist_safety_app",
