@@ -1,17 +1,40 @@
+// index.js
+
 const express = require('express');
+const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
-const app = express();
-const PORT = process.env.PORT || 5000;
+const touristRoutes = require('./routes/touristRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
 
+const app = express();
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
+// Database Connection
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log('MongoDB Connected'))
+.catch(err => console.error('MongoDB connection error:', err));
+
+
+// API Routes
+app.use('/api/tourist', touristRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+
+// Root route
 app.get('/', (req, res) => {
-  res.send({ message: 'Smart Tourist Backend Running' });
+  res.send('Smart Tourist Safety Monitoring API is running!');
 });
 
+
+const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
