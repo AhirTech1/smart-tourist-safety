@@ -1,5 +1,7 @@
+// lib/screens/login_screen.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:smart_tourist_safety_app/services/api_service.dart';
+import 'package:smart_tourist_safety_app/screens/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -9,118 +11,80 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _deviceIdController = TextEditingController();
+  final _apiService = ApiService();
   bool _isLoading = false;
 
-  Future<void> _login() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    // Simulate a network request
-    await Future.delayed(const Duration(seconds: 2));
-
-    // In a real app, you would make an API call here.
-    // For now, we'll just navigate to the home screen.
-    if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/home');
+  void _registerAndLogin() async {
+    if (_nameController.text.isEmpty || _deviceIdController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all fields.')),
+      );
+      return;
     }
 
-    setState(() {
-      _isLoading = false;
-    });
+    setState(() => _isLoading = true);
+
+    final result = await _apiService.registerTourist(
+      _nameController.text,
+      _deviceIdController.text,
+    );
+
+    setState(() => _isLoading = false);
+
+    if (result.containsKey('error')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Registration failed: ${result['message']}')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Registration successful!')),
+      );
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => HomeScreen(
+            deviceId: _deviceIdController.text,
+            onToggleTheme: () {}, // will wire theme later
+          ),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.blue.shade200, Colors.blue.shade500],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(32.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  'assets/2.png',
-                  height: 100,
-                  width: 100,
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  'Smart Tourist Safety',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Your safety is our priority',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white70),
-                ),
-                const SizedBox(height: 40),
-                _buildTextField(_emailController, 'Email', Icons.email),
-                const SizedBox(height: 20),
-                _buildTextField(_passwordController, 'Password', Icons.lock, obscureText: true),
-                const SizedBox(height: 40),
-                _isLoading
-                    ? const CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white))
-                    : SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: _login,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.blue.shade700,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                          child: const Text('LOGIN', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                        ),
-                      ),
-                const SizedBox(height: 20),
-                TextButton(
-                  onPressed: () {},
-                  child: const Text(
-                    'Forgot Password?',
-                    style: TextStyle(color: Colors.white70),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+      appBar: AppBar(
+        title: const Text('Tourist Registration'),
+        backgroundColor: Colors.blueAccent,
       ),
-    );
-  }
-
-  Widget _buildTextField(TextEditingController controller, String label, IconData icon, {bool obscureText = false}) {
-    return TextField(
-      controller: controller,
-      obscureText: obscureText,
-      style: const TextStyle(color: Colors.white),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(color: Colors.white70),
-        prefixIcon: Icon(icon, color: Colors.white70),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.white54),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.white),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextField(
+              controller: _nameController,
+              decoration: const InputDecoration(labelText: 'Your Name'),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _deviceIdController,
+              decoration: const InputDecoration(labelText: 'Unique Device ID (e.g., myphone123)'),
+            ),
+            const SizedBox(height: 32),
+            _isLoading
+                ? const CircularProgressIndicator()
+                : ElevatedButton(
+                    onPressed: _registerAndLogin,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                    ),
+                    child: const Text('Register & Enter'),
+                  ),
+          ],
         ),
       ),
     );

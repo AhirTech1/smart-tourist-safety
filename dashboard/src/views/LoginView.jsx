@@ -1,22 +1,17 @@
 import React from 'react';
-import { useNavigate } from "react-router-dom";
 
-export default function LoginView() {
-  const navigate = useNavigate();
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-    navigate("/dashboard");
-  };
-
+export default function LoginView({ onLogin }) {
   return (
-    <div className="container">
-      <h1>Tourist Safety Dashboard Login</h1>
-      <form onSubmit={handleLogin}>
-        <input type="text" placeholder="Username" required />
-        <input type="password" placeholder="Password" required />
-        <button type="submit">Login</button>
-      </form>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="p-8 bg-white rounded-lg shadow-md w-96">
+        <h2 className="text-2xl font-bold text-center mb-6">Admin Login</h2>
+        <button 
+          onClick={() => onLogin(true)}
+          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Login to Dashboard
+        </button>
+      </div>
     </div>
   );
 }

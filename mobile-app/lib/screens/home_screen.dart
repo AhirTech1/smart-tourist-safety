@@ -1,71 +1,91 @@
+// lib/screens/home_screen.dart
 import 'package:flutter/material.dart';
-import 'package:smart_tourist_safety_app/screens/alerts_screen.dart';
-import 'package:smart_tourist_safety_app/screens/contacts_screen.dart';
-import 'package:smart_tourist_safety_app/screens/live_location_screen.dart';
-import 'package:smart_tourist_safety_app/screens/report_incident_screen.dart';
+import 'package:smart_tourist_safety_app/services/api_service.dart';
+import 'alerts_screen.dart';
+import 'contacts_screen.dart';
+import 'live_location_screen.dart';
+import 'report_incident_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback onToggleTheme;
-  const HomeScreen({super.key, required this.onToggleTheme});
+  final String deviceId;
+
+  const HomeScreen({super.key, required this.onToggleTheme, required this.deviceId});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final ApiService _apiService = ApiService();
   int _currentIndex = 0;
+
+  void _showApiResponse(String title, Map<String, dynamic> response) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(response.toString()),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK')),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _sendLocation() async {
+    final response = await _apiService.updateLocation(widget.deviceId, 21.1702, 72.8311);
+    _showApiResponse('Location Update', response);
+  }
+
+  Future<void> _triggerPanic() async {
+    final response = await _apiService.triggerPanic(widget.deviceId);
+    _showApiResponse('Panic Alert', response);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Safety Dashboard'),
+        title: Text('Safety Dashboard (${widget.deviceId})'),
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
         actions: [
           IconButton(
-            icon: Icon(Theme.of(context).brightness == Brightness.light
-                ? Icons.dark_mode
-                : Icons.light_mode),
+            icon: Icon(Theme.of(context).brightness == Brightness.light ? Icons.dark_mode : Icons.light_mode),
             onPressed: widget.onToggleTheme,
           ),
           IconButton(
             icon: const Icon(Icons.logout),
-            onPressed: () {
-              Navigator.of(context).pushReplacementNamed('/');
-            },
+            onPressed: () => Navigator.of(context).pushReplacementNamed('/'),
           ),
         ],
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildSosButton(),
-              const SizedBox(height: 24),
-              _buildDashboardGrid(),
-            ],
-          ),
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildSosButton(),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.location_on),
+              label: const Text('Send Location Update'),
+              onPressed: _sendLocation,
+              style: ElevatedButton.styleFrom(padding: const EdgeInsets.all(15)),
+            ),
+            const SizedBox(height: 24),
+            _buildDashboardGrid(),
+          ],
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) => setState(() => _currentIndex = index),
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: 'Map',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );
@@ -78,35 +98,19 @@ class _HomeScreenState extends State<HomeScreen> {
         shape: BoxShape.circle,
         color: Colors.red.shade50,
         boxShadow: [
-          BoxShadow(
-            color: Colors.red.withOpacity(0.3),
-            spreadRadius: 8,
-            blurRadius: 24,
-          ),
+          BoxShadow(color: Colors.red.withOpacity(0.3), spreadRadius: 8, blurRadius: 24),
         ],
       ),
       child: Center(
         child: ElevatedButton(
-          onPressed: () {
-            // Placeholder: Send SOS signal to the backend
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('SOS Signal Sent!')),
-            );
-          },
+          onPressed: _triggerPanic,
           style: ElevatedButton.styleFrom(
             shape: const CircleBorder(),
             padding: const EdgeInsets.all(60),
             backgroundColor: Colors.red.shade600,
             foregroundColor: Colors.white,
           ),
-          child: const Text(
-            'SOS',
-            style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 2,
-            ),
-          ),
+          child: const Text('SOS', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, letterSpacing: 2)),
         ),
       ),
     );
@@ -148,63 +152,10 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Icon(icon, size: 50, color: color),
             const SizedBox(height: 16),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
+            Text(title, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           ],
         ),
       ),
-    );
-  }
-}
-
-// Placeholder screens for navigation
-class LiveLocationScreen extends StatelessWidget {
-  const LiveLocationScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Live Location')),
-      body: const Center(child: Text('Live Location functionality will be implemented here.')),
-    );
-  }
-}
-
-class AlertsScreen extends StatelessWidget {
-  const AlertsScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Safety Alerts')),
-      body: const Center(child: Text('Safety Alerts functionality will be implemented here.')),
-    );
-  }
-}
-
-class ContactsScreen extends StatelessWidget {
-  const ContactsScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Emergency Contacts')),
-      body: const Center(child: Text('Emergency Contacts functionality will be implemented here.')),
-    );
-  }
-}
-
-class ReportIncidentScreen extends StatelessWidget {
-  const ReportIncidentScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Report Incident')),
-      body: const Center(child: Text('Report Incident functionality will be implemented here.')),
     );
   }
 }

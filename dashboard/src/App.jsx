@@ -1,17 +1,13 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LoginView from "./views/LoginView";
-import DashboardView from "./views/DashboardView";
+import React, { useState } from 'react';
+import DashboardView from './views/DashboardView';
+import LoginView from './views/LoginView';
 
-function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LoginView />} />
-        <Route path="/dashboard/*" element={<DashboardView />} />
-      </Routes>
-    </BrowserRouter>
-  );
+export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  if (!isLoggedIn) {
+    return <LoginView onLogin={setIsLoggedIn} />;
+  }
+
+  return <DashboardView />;
 }
-
-export default App;

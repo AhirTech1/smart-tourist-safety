@@ -1,73 +1,8 @@
-/* index.css */
-
-/* Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 body {
-  font-family: system-ui, sans-serif;
-  background-color: #f5f6fa;
-  color: #333;
-}
-
-/* Links */
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-}
-
-/* Login page */
-.container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: #dcdde1;
-}
-
-.container h1 {
-  margin-bottom: 1.5rem;
-  font-size: 1.8rem;
-}
-
-.container form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  width: 300px;
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.container input {
-  padding: 0.6rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-.container button {
-  padding: 0.6rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 4px;
-  background-color: #40739e;
-  color: white;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.container button:hover {
-  background-color: #273c75;
+  margin: 0;
+  font-family: sans-serif;
 }
