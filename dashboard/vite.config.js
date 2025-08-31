@@ -1,7 +1,9 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import postcss from '@tailwindcss/postcss'
 
 export default defineConfig({
-  plugins: [react()],
-  root: '.', // make sure it points to where index.html is
+  plugins: [],
+  css: {
+    postcss
+  }
 })
