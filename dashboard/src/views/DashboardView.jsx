@@ -1,6 +1,6 @@
 import React from 'react';
 import Sidebar from '../components/Sidebar';
-import MainContent from '../components/MainComponent';
+import MainContent from '../components/MainContent';
 import '../styles/main.css';
 
 export default function DashboardView() {
