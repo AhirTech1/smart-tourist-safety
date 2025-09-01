@@ -1,19 +1,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <application
-        android:label="smart_tourist_safety_app"
-        android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">    
-    </application>
-    
     <application
         android:label="smart_tourist_safety_app"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 
-        <!-- Correct meta-data key for Google Maps -->
+        <!-- Required for Google Play Services -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <!-- Google Maps API Key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBXg73KaiV_Dgr33WSGhCvnG7C1sceWbgc"/>

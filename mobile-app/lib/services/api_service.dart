@@ -32,24 +32,28 @@ class ApiService {
     required List<Map<String, dynamic>> emergencyContacts,
   }) async {
     try {
-      // Determine if the ID is Aadhar or Passport (simple length check)
-      final bool isAadhar = idNumber != null && idNumber.replaceAll(' ', '').length == 12;
-
-      final response = await http.post(
-        Uri.parse('$_baseUrl/auth/register'), // 1. CORRECTED ENDPOINT
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
+      final Map<String, dynamic> body = {
           'name': name,
           'email': email,
           'phoneNumber': phoneNumber,
           'password': password,
           'tripDuration': tripDuration,
           'tripItinerary': tripItinerary ?? '',
-          // 2. CORRECTED KEYS to match backend model
-          if (isAadhar) 'aadharNumber': idNumber,
-          if (!isAadhar) 'passportNumber': idNumber,
           'emergencyContacts': emergencyContacts,
-        }),
+        };
+
+      if (idNumber != null && idNumber.isNotEmpty) {
+        if (idNumber.replaceAll(' ', '').length == 12) {
+          body['aadharNumber'] = idNumber;
+        } else {
+          body['passportNumber'] = idNumber;
+        }
+      }
+
+      final response = await http.post(
+        Uri.parse('$_baseUrl/auth/register'), // 1. CORRECTED ENDPOINT
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(body),
       );
       return _handleResponse(response);
     } catch (e) {
@@ -113,7 +117,7 @@ class ApiService {
       final errorBody = jsonDecode(response.body);
       return {
         'error': true,
-        'message': 'login error: ${response.statusCode}',
+        'message': 'API Error: ${response.statusCode}',
         'details': errorBody
       };
     }

@@ -6,8 +6,10 @@ import 'package:smart_tourist_safety_app/services/api_service.dart';
 import 'package:smart_tourist_safety_app/theme/theme_notifier.dart';
 import 'alerts_screen.dart';
 import 'contacts_screen.dart';
-import 'live_location_screen.dart';
+import 'maps_screen.dart';
+import 'profile_screen.dart';
 import 'report_incident_screen.dart';
+import 'safety_tips_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final Map<String, dynamic> tourist;
@@ -84,28 +86,47 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _startLiveLocation() async {
-    // Ask for permission
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) return;
-    }
-    if (permission == LocationPermission.deniedForever) {
-      // Permissions are permanently denied
-      return;
-    }
+    try {
+      // Check if location services are enabled
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        debugPrint('Location services are disabled.');
+        return;
+      }
 
-    // Start location stream
-    _positionStream = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: 10, // update every 10 meters
-      ),
-    );
+      // Ask for permission
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          debugPrint('Location permissions are denied');
+          return;
+        }
+      }
+      if (permission == LocationPermission.deniedForever) {
+        debugPrint('Location permissions are permanently denied');
+        return;
+      }
 
-    _positionStream!.listen((Position position) {
-      _sendLocation(position.latitude, position.longitude);
-    });
+      // Start location stream
+      _positionStream = Geolocator.getPositionStream(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          distanceFilter: 10, // update every 10 meters
+        ),
+      );
+
+      _positionStream!.listen(
+        (Position position) {
+          _sendLocation(position.latitude, position.longitude);
+        },
+        onError: (error) {
+          debugPrint('Location stream error: $error');
+        },
+      );
+    } catch (e) {
+      debugPrint('Error starting live location: $e');
+    }
   }
 
   @override
@@ -115,8 +136,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final List<Widget> screens = [
       _buildHomeTab(isKycValid),
-      const LiveLocationScreen(),
-      const KycPromptScreen(), // Replace with actual profile screen
+      MapsScreen(tourist: widget.tourist),
+      ProfileScreen(tourist: widget.tourist),
     ];
 
     return Scaffold(
@@ -127,10 +148,6 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(themeNotifier.themeMode == ThemeMode.light ? Icons.dark_mode : Icons.light_mode),
             onPressed: () => themeNotifier.toggleTheme(),
           ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => Navigator.of(context).pushReplacementNamed('/'),
-          ),
         ],
       ),
       body: screens[_currentIndex],
@@ -139,8 +156,8 @@ class _HomeScreenState extends State<HomeScreen> {
         onTap: (index) => setState(() => _currentIndex = index),
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.map_outlined), label: 'Map'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Maps'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );
@@ -171,8 +188,58 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.my_location),
             label: const Text('Send Current Location Once'),
             onPressed: () async {
-              final pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-              _sendLocation(pos.latitude, pos.longitude);
+              try {
+                // Check if location services are enabled
+                bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+                if (!serviceEnabled) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Please enable location services')),
+                    );
+                  }
+                  return;
+                }
+
+                // Check permissions
+                LocationPermission permission = await Geolocator.checkPermission();
+                if (permission == LocationPermission.denied) {
+                  permission = await Geolocator.requestPermission();
+                  if (permission == LocationPermission.denied) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Location permission denied')),
+                      );
+                    }
+                    return;
+                  }
+                }
+
+                if (permission == LocationPermission.deniedForever) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Location permission permanently denied. Please enable in settings.')),
+                    );
+                  }
+                  return;
+                }
+
+                final pos = await Geolocator.getCurrentPosition(
+                  desiredAccuracy: LocationAccuracy.high,
+                );
+                await _sendLocation(pos.latitude, pos.longitude);
+                
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Location sent successfully')),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error getting location: $e')),
+                  );
+                }
+              }
             },
           ),
           const SizedBox(height: 24),
@@ -217,8 +284,8 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
         children: [
-          _buildDashboardCard('Live Location', Icons.location_on, Colors.blue, isKycValid ? () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LiveLocationScreen()));
+          _buildDashboardCard('Safety Tips', Icons.lightbulb, Colors.amber, isKycValid ? () {
+            Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SafetyTipsScreen()));
           } : null),
           _buildDashboardCard('Safety Alerts', Icons.warning, Colors.orange, isKycValid ? () {
             Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AlertsScreen()));
