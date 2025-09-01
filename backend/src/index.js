@@ -1,5 +1,3 @@
-// index.js
-
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -7,6 +5,7 @@ require('dotenv').config();
 
 const touristRoutes = require('./routes/touristRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const authRoutes = require('./routes/auth_routes'); // Import auth routes
 
 const app = express();
 
@@ -26,6 +25,7 @@ mongoose.connect(process.env.MONGO_URI, {
 // API Routes
 app.use('/api/tourist', touristRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/auth', authRoutes); // Use auth routes
 
 // Root route
 app.get('/', (req, res) => {

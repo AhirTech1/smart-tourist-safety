@@ -1,51 +1,43 @@
-// lib/main.dart
 import 'package:flutter/material.dart';
-import 'package:smart_tourist_safety_app/screens/home_screen.dart';
+import 'package:provider/provider.dart';
 import 'package:smart_tourist_safety_app/screens/login_screen.dart';
+import 'package:smart_tourist_safety_app/theme/theme_notifier.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeNotifier(),
+      child: const MyApp(),
+    ),
+  );
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  Widget build(BuildContext context) {
+    return Consumer<ThemeNotifier>(
+      builder: (context, theme, _) {
+        return MaterialApp(
+          title: 'Smart Tourist Safety',
+          theme: theme.lightTheme,
+          darkTheme: theme.darkTheme,
+          themeMode: theme.themeMode,
+          home: const AuthWrapper(),
+        );
+      },
+    );
+  }
 }
 
-class _MyAppState extends State<MyApp> {
-  ThemeMode _themeMode = ThemeMode.light;
-
-  void _toggleTheme() {
-    setState(() {
-      _themeMode = _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
-    });
-  }
+class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Smart Tourist Safety App',
-      theme: ThemeData(
-        brightness: Brightness.light,
-        primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.white,
-        appBarTheme: const AppBarTheme(backgroundColor: Colors.blue, foregroundColor: Colors.white),
-      ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.black,
-        appBarTheme: const AppBarTheme(backgroundColor: Colors.black87, foregroundColor: Colors.white),
-      ),
-      themeMode: _themeMode,
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const LoginScreen(),
-        // pass toggle theme when navigating manually from login
-        '/home': (context) => HomeScreen(deviceId: 'unknown', onToggleTheme: _toggleTheme),
-      },
-    );
+    // Here you can add logic to check if the user is already logged in
+    // For now, we'll always show the login screen.
+    return const LoginScreen();
   }
 }

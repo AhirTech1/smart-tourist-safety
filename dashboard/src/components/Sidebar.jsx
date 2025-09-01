@@ -1,7 +1,7 @@
 import React from 'react';
 import { Shield, Map, AlertTriangle, BarChart2, Users, LogOut } from 'lucide-react';
 
-export default function Sidebar({ currentView, setCurrentView }) {
+export default function Sidebar({ currentView, setCurrentView, onLogout }) {
   const navItems = [
     { name: 'Dashboard', icon: <BarChart2 size={20} />, view: 'DashboardHome' },
     { name: 'Live Map', icon: <Map size={20} />, view: 'TouristMap' },
@@ -34,7 +34,7 @@ export default function Sidebar({ currentView, setCurrentView }) {
         ))}
       </nav>
       <div className="p-4 border-t border-gray-700">
-        <a href="#" onClick={(e) => {e.preventDefault(); alert("Logged out!")}} className="flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white">
+        <a href="#" onClick={(e) => {e.preventDefault(); onLogout()}} className="flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white">
           <LogOut size={20}/>
           <span className="ml-4">Logout</span>
         </a>

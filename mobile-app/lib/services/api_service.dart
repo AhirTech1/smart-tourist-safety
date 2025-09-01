@@ -1,23 +1,48 @@
-// lib/services/api_service.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  // IMPORTANT: Replace this with your computer's actual IP address from Step 2.
-  // Your phone and computer MUST be on the same Wi-Fi network.
-  // Example: 'http://192.168.1.10:5000/api'
   static const String _baseUrl = 'http://192.168.1.69:5000/api';
 
-  // Registers a new tourist
-  Future<Map<String, dynamic>> registerTourist(String name, String deviceId) async {
+  // Login method
+  Future<Map<String, dynamic>> login(String email, String password) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/tourist/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email, 'password': password}),
+      );
+      return _handleResponse(response);
+    } catch (e) {
+      print('Network Error on login: $e');
+      return {'error': true, 'message': 'Could not connect to the server.'};
+    }
+  }
+
+  // Registers a new tourist with all required fields
+  Future<Map<String, dynamic>> registerTourist({
+    required String name,
+    required String email,
+    required String phoneNumber,
+    required String password,
+    required int tripDuration,
+    String? tripItinerary,
+    String? idNumber,
+    required List<Map<String, dynamic>> emergencyContacts,
+  }) async {
     try {
       final response = await http.post(
         Uri.parse('$_baseUrl/tourist/register'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'name': name,
-          'deviceId': deviceId,
-          'contactInfo': {'phone': '555-123-4567', 'email': 'tourist@app.com'}
+          'email': email,
+          'phoneNumber': phoneNumber,
+          'password': password,
+          'tripDuration': tripDuration,
+          'tripItinerary': tripItinerary ?? '',
+          'idNumber': idNumber ?? '',
+          'emergencyContacts': emergencyContacts,
         }),
       );
       return _handleResponse(response);
@@ -28,7 +53,8 @@ class ApiService {
   }
 
   // Updates the tourist's location
-  Future<Map<String, dynamic>> updateLocation(String deviceId, double latitude, double longitude) async {
+  Future<Map<String, dynamic>> updateLocation(
+      String deviceId, double latitude, double longitude) async {
     try {
       final response = await http.post(
         Uri.parse('$_baseUrl/tourist/location/$deviceId'),
@@ -37,7 +63,7 @@ class ApiService {
       );
       return _handleResponse(response);
     } catch (e) {
-       print('Network Error on updateLocation: $e');
+      print('Network Error on updateLocation: $e');
       return {'error': true, 'message': 'Could not connect to the server.'};
     }
   }
@@ -66,4 +92,3 @@ class ApiService {
     }
   }
 }
-

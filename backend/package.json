@@ -13,9 +13,10 @@
     "monitoring",
     "sih"
   ],
-  "author": "YourTeamName",
+  "author": "TeamEvolv",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.6.1",
     "express": "^4.18.2",

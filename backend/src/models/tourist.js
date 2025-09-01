@@ -1,20 +1,60 @@
-// models/tourist.js
-
 const mongoose = require('mongoose');
+
+const emergencyContactSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  relationship: { type: String, required: true },
+  phoneNumber: { type: String, required: true },
+});
 
 const touristSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
   },
-  deviceId: {
+  email: {
     type: String,
     required: true,
     unique: true,
   },
-  contactInfo: {
-    phone: String,
-    email: String,
+  password: {
+    type: String,
+    required: true,
+  },
+  phoneNumber: {
+    type: String,
+    required: true,
+  },
+  tripDuration: {
+    type: Number, // Duration in days
+    required: true,
+  },
+  tripItinerary: {
+    type: String,
+    default: '',
+  },
+  kycStatus: {
+    type: String,
+    enum: ['pending', 'verified', 'rejected', 'expired'],
+    default: 'pending',
+  },
+  passportNumber: {
+    type: String,
+  },
+  aadharNumber: {
+    type: String,
+  },
+  digitalId: {
+    type: String,
+    unique: true,
+    sparse: true, // Allows multiple null values
+  },
+  idValidUntil: {
+    type: Date,
+  },
+  emergencyContacts: [emergencyContactSchema],
+  deviceId: {
+    type: String,
+    required: false,
   },
   location: {
     latitude: {
