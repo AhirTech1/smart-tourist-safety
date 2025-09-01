@@ -11,12 +11,14 @@ export default function DashboardView({ onLogout }) {
   const [currentView, setCurrentView] = useState('DashboardHome');
   const [tourists, setTourists] = useState([]);
   const [alerts, setAlerts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // Will only be true on the first load
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
+    const fetchData = async (isInitialLoad = false) => {
+      if (isInitialLoad) {
+        setIsLoading(true);
+      }
       setError(null);
       try {
         const [touristsData, alertsData] = await Promise.all([
@@ -29,12 +31,14 @@ export default function DashboardView({ onLogout }) {
         console.error("Failed to fetch data:", err);
         setError("Could not connect to the backend. Make sure it's running and accessible.");
       } finally {
-        setIsLoading(false);
+        if (isInitialLoad) {
+          setIsLoading(false);
+        }
       }
     };
 
-    fetchData();
-    const intervalId = setInterval(fetchData, 10000); // Refresh every 10 seconds
+    fetchData(true); // Initial fetch
+    const intervalId = setInterval(fetchData, 10000); // Subsequent fetches
     return () => clearInterval(intervalId);
   }, []);
 

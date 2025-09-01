@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import DashboardView from './views/DashboardView';
 import LoginView from './views/LoginView';
 
@@ -23,10 +24,13 @@ export default function App() {
     setIsAuthenticated(false);
   };
 
-
-  if (!isAuthenticated) {
-    return <LoginView onLogin={handleLogin} />;
-  }
-
-  return <DashboardView onLogout={handleLogout} />;
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" /> : <LoginView onLogin={handleLogin} />} />
+        <Route path="/dashboard" element={isAuthenticated ? <DashboardView onLogout={handleLogout} /> : <Navigate to="/" />} />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Router>
+  );
 }
