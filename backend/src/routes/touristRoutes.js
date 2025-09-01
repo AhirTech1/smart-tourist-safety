@@ -8,9 +8,9 @@ const touristController = require('../controllers/touristController');
 router.post('/register', touristController.registerTourist);
 
 // Route to update a tourist's location
-router.post('/location/:deviceId', touristController.updateLocation);
+router.post('/location/:id', touristController.updateLocation);
 
 // Route to trigger a panic alert
-router.post('/panic/:deviceId', touristController.triggerPanic);
+router.post('/panic/:id', touristController.triggerPanic);
 
 module.exports = router;

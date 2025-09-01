@@ -3,8 +3,9 @@
 const Tourist = require('../models/tourist');
 const Alert = require('../models/alert');
 
-// Register a new tourist
+// Register a new tourist (This function is kept for reference but new registrations go through auth_controller)
 exports.registerTourist = async (req, res) => {
+  // ... this function remains the same, but is not used by the main registration flow anymore
   try {
     const { name, deviceId, contactInfo } = req.body;
     const newTourist = new Tourist({
@@ -22,18 +23,23 @@ exports.registerTourist = async (req, res) => {
 // Update tourist's location
 exports.updateLocation = async (req, res) => {
   try {
-    const { deviceId } = req.params;
+    const { id } = req.params; // UPDATED: Changed from deviceId to id
     const { latitude, longitude } = req.body;
 
-    const tourist = await Tourist.findOneAndUpdate(
-      { deviceId },
+    // UPDATED: Changed query to find by _id and removed upsert to prevent creating new users
+    const tourist = await Tourist.findByIdAndUpdate(
+      id,
       {
         'location.latitude': latitude,
         'location.longitude': longitude,
         lastSeen: Date.now(),
       },
-      { new: true, upsert: true } // Creates a new document if one doesn't exist
+      { new: true } 
     );
+
+    if (!tourist) {
+        return res.status(404).json({ message: "Tourist not found for location update." });
+    }
 
     res.status(200).json({ message: 'Location updated', tourist });
   } catch (error) {
@@ -44,8 +50,8 @@ exports.updateLocation = async (req, res) => {
 // Trigger a panic alert
 exports.triggerPanic = async (req, res) => {
   try {
-    const { deviceId } = req.params;
-    const tourist = await Tourist.findOne({ deviceId });
+    const { id } = req.params; // UPDATED: Changed from deviceId to id
+    const tourist = await Tourist.findById(id); // UPDATED: Changed to findById
 
     if (!tourist) {
       return res.status(404).json({ message: 'Tourist not found' });

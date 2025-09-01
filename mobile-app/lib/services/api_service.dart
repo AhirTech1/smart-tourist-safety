@@ -2,13 +2,14 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
+  // Use 10.0.2.2 for Android emulator to connect to localhost on your computer
   static const String _baseUrl = 'http://192.168.1.69:5000/api';
 
   // Login method
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('$_baseUrl/tourist/login'),
+        Uri.parse('$_baseUrl/auth/login'), // Corrected endpoint
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': email, 'password': password}),
       );
@@ -31,8 +32,11 @@ class ApiService {
     required List<Map<String, dynamic>> emergencyContacts,
   }) async {
     try {
+      // Determine if the ID is Aadhar or Passport (simple length check)
+      final bool isAadhar = idNumber != null && idNumber.replaceAll(' ', '').length == 12;
+
       final response = await http.post(
-        Uri.parse('$_baseUrl/tourist/register'),
+        Uri.parse('$_baseUrl/auth/register'), // 1. CORRECTED ENDPOINT
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'name': name,
@@ -41,7 +45,9 @@ class ApiService {
           'password': password,
           'tripDuration': tripDuration,
           'tripItinerary': tripItinerary ?? '',
-          'idNumber': idNumber ?? '',
+          // 2. CORRECTED KEYS to match backend model
+          if (isAadhar) 'aadharNumber': idNumber,
+          if (!isAadhar) 'passportNumber': idNumber,
           'emergencyContacts': emergencyContacts,
         }),
       );
@@ -54,10 +60,10 @@ class ApiService {
 
   // Updates the tourist's location
   Future<Map<String, dynamic>> updateLocation(
-      String deviceId, double latitude, double longitude) async {
+      String touristId, double latitude, double longitude) async {
     try {
       final response = await http.post(
-        Uri.parse('$_baseUrl/tourist/location/$deviceId'),
+        Uri.parse('$_baseUrl/tourist/location/$touristId'), // Use touristId, not deviceId
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'latitude': latitude, 'longitude': longitude}),
       );
@@ -69,10 +75,10 @@ class ApiService {
   }
 
   // Triggers a panic alert for a device
-  Future<Map<String, dynamic>> triggerPanic(String deviceId) async {
+  Future<Map<String, dynamic>> triggerPanic(String touristId) async {
     try {
       final response = await http.post(
-        Uri.parse('$_baseUrl/tourist/panic/$deviceId'),
+        Uri.parse('$_baseUrl/tourist/panic/$touristId'), // Use touristId
         headers: {'Content-Type': 'application/json'},
       );
       return _handleResponse(response);
@@ -88,7 +94,12 @@ class ApiService {
       return jsonDecode(response.body);
     } else {
       print('API Error: ${response.statusCode} - ${response.body}');
-      return {'error': true, 'message': 'API Error: ${response.statusCode}'};
+      final errorBody = jsonDecode(response.body);
+      return {
+        'error': true,
+        'message': 'login error: ${response.statusCode}',
+        'details': errorBody
+      };
     }
   }
 }
