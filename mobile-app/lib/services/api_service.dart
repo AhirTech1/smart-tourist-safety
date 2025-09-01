@@ -88,6 +88,22 @@ class ApiService {
     }
   }
 
+  // Fetches high-risk zones
+  Future<List<dynamic>> getHighRiskZones() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$_baseUrl/dashboard/high-risk-zones'),
+      );
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      }
+      return [];
+    } catch (e) {
+      print('Network Error on getHighRiskZones: $e');
+      return [];
+    }
+  }
+
   // Helper to decode response and handle errors
   Map<String, dynamic> _handleResponse(http.Response response) {
     if (response.statusCode >= 200 && response.statusCode < 300) {

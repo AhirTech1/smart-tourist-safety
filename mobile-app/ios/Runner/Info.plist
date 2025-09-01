@@ -44,6 +44,11 @@
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<key>GMSApiKey</key>
+	<string>YOUR_API_KEY</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs access to your location to show high-risk zones and provide safety alerts.</string>
+	<key>io.flutter.embedded_views_preview</key>
 	<true/>
 </dict>
 </plist>

@@ -18,6 +18,8 @@ dependencies:
   google_fonts: ^6.2.1
   flutter_svg: ^2.0.10+1
   http: ^1.2.1
+  google_maps_flutter: ^2.7.0
+  geolocator: ^10.0.0
 
 dev_dependencies:
   flutter_test:
@@ -30,7 +32,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
-  generate: true  # <- This must be properly indented under 'flutter'
+  generate: true
 
 flutter-gen:
   output: lib/gen/

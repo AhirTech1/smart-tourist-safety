@@ -13,5 +13,7 @@ router.get('/alerts', dashboardController.getAllAlerts);
 // Route to get details for a specific tourist
 router.get('/tourist/:id', dashboardController.getTouristDetails);
 
+// Route to get all high-risk zones
+router.get('/high-risk-zones', dashboardController.getHighRiskZones);
 
 module.exports = router;

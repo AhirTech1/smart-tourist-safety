@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:smart_tourist_safety_app/screens/kyc_prompt_screen.dart';
 import 'package:smart_tourist_safety_app/services/api_service.dart';
 import 'package:smart_tourist_safety_app/theme/theme_notifier.dart';
@@ -20,6 +21,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final ApiService _apiService = ApiService();
   int _currentIndex = 0;
+  Stream<Position>? _positionStream;
 
   @override
   void initState() {
@@ -29,13 +31,27 @@ class _HomeScreenState extends State<HomeScreen> {
         _showKycPrompt();
       }
     });
+    _startLiveLocation();
   }
 
   void _showKycPrompt() {
+    if (!mounted) return;
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const KycPromptScreen(),
+      builder: (context) => AlertDialog(
+        title: const Text('KYC Required'),
+        content: const Text('Your Digital ID has expired. Please complete KYC to access safety features.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).push(MaterialPageRoute(builder: (_) => const KycPromptScreen()));
+            },
+            child: const Text('Complete KYC'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -53,14 +69,43 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Future<void> _sendLocation() async {
-    final response = await _apiService.updateLocation(widget.tourist['id'], 21.1702, 72.8311);
-    _showApiResponse('Location Update', response);
+  Future<void> _sendLocation(double lat, double lng) async {
+    final id = widget.tourist['id'];
+    if (id == null) return;
+    final response = await _apiService.updateLocation(id, lat, lng);
+    debugPrint("Location sent: $lat, $lng → $response");
   }
 
   Future<void> _triggerPanic() async {
-    final response = await _apiService.triggerPanic(widget.tourist['id']);
-    _showApiResponse('Panic Alert', response);
+    final id = widget.tourist['id'];
+    if (id == null) return;
+    final response = await _apiService.triggerPanic(id);
+    if (mounted) _showApiResponse('Panic Alert', response);
+  }
+
+  Future<void> _startLiveLocation() async {
+    // Ask for permission
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) return;
+    }
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are permanently denied
+      return;
+    }
+
+    // Start location stream
+    _positionStream = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 10, // update every 10 meters
+      ),
+    );
+
+    _positionStream!.listen((Position position) {
+      _sendLocation(position.latitude, position.longitude);
+    });
   }
 
   @override
@@ -68,9 +113,15 @@ class _HomeScreenState extends State<HomeScreen> {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
     final isKycValid = widget.tourist['digitalId'] != null;
 
+    final List<Widget> screens = [
+      _buildHomeTab(isKycValid),
+      const LiveLocationScreen(),
+      const KycPromptScreen(), // Replace with actual profile screen
+    ];
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Welcome, ${widget.tourist['name']}'),
+        title: Text('Welcome, ${widget.tourist['name'] ?? "Tourist"}'),
         actions: [
           IconButton(
             icon: Icon(themeNotifier.themeMode == ThemeMode.light ? Icons.dark_mode : Icons.light_mode),
@@ -82,43 +133,50 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (isKycValid)
-              _buildSosButton()
-            else
-              Card(
-                color: Theme.of(context).colorScheme.errorContainer,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    'Your Digital ID is expired. Please complete KYC to access safety features.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Theme.of(context).colorScheme.onErrorContainer),
-                  ),
-                ),
-              ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.location_on),
-              label: const Text('Send Location Update'),
-              onPressed: _sendLocation,
-            ),
-            const SizedBox(height: 24),
-            _buildDashboardGrid(isKycValid),
-          ],
-        ),
-      ),
+      body: screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) => setState(() => _currentIndex = index),
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(icon: Icon(Icons.map_outlined), label: 'Map'),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHomeTab(bool isKycValid) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (isKycValid)
+            _buildSosButton()
+          else
+            Card(
+              color: Theme.of(context).colorScheme.errorContainer,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'Your Digital ID is expired. Please complete KYC to access safety features.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Theme.of(context).colorScheme.onErrorContainer),
+                ),
+              ),
+            ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            icon: const Icon(Icons.my_location),
+            label: const Text('Send Current Location Once'),
+            onPressed: () async {
+              final pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+              _sendLocation(pos.latitude, pos.longitude);
+            },
+          ),
+          const SizedBox(height: 24),
+          _buildDashboardGrid(isKycValid),
         ],
       ),
     );
@@ -160,16 +218,16 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisSpacing: 16,
         children: [
           _buildDashboardCard('Live Location', Icons.location_on, Colors.blue, isKycValid ? () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const LiveLocationScreen()));
+            Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LiveLocationScreen()));
           } : null),
           _buildDashboardCard('Safety Alerts', Icons.warning, Colors.orange, isKycValid ? () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AlertsScreen()));
+            Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AlertsScreen()));
           } : null),
           _buildDashboardCard('Emergency Contacts', Icons.contact_phone, Colors.green, isKycValid ? () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ContactsScreen()));
+            Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ContactsScreen()));
           } : null),
           _buildDashboardCard('Report Incident', Icons.report_problem, Colors.purple, isKycValid ? () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ReportIncidentScreen()));
+            Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReportIncidentScreen()));
           } : null),
         ],
       ),
@@ -186,7 +244,11 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Icon(icon, size: 50, color: onTap != null ? color : Colors.grey),
             const SizedBox(height: 16),
-            Text(title, textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: onTap != null ? null : Colors.grey)),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: onTap != null ? null : Colors.grey),
+            ),
           ],
         ),
       ),
