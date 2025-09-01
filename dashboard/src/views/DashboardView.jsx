@@ -51,7 +51,7 @@ export default function DashboardView({ onLogout }) {
       case 'DashboardHome':
         return <DashboardHome tourists={tourists} alerts={alerts} isLoading={isLoading}/>;
       case 'TouristMap':
-        return <TouristMap />;
+        return <TouristMap tourists={tourists} alerts={alerts} />;
       case 'Alerts':
         return <Alerts alerts={alerts} isLoading={isLoading}/>;
       case 'Reports':
