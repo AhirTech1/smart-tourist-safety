@@ -3,9 +3,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  // Use 10.0.2.2 for the Android emulator to connect to your computer's localhost.
-  // For iOS simulator or a physical device on the same Wi-Fi, replace with your computer's local IP address (e.g., http://192.168.1.5:5000/api).
-  static const String _baseUrl = 'http://10.0.2.2:5000/api';
+  // IMPORTANT: Replace this with your computer's actual IP address from Step 2.
+  // Your phone and computer MUST be on the same Wi-Fi network.
+  // Example: 'http://192.168.1.10:5000/api'
+  static const String _baseUrl = 'http://192.168.1.69:5000/api';
 
   // Registers a new tourist
   Future<Map<String, dynamic>> registerTourist(String name, String deviceId) async {
@@ -65,3 +66,4 @@ class ApiService {
     }
   }
 }
+
