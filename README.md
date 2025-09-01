@@ -20,7 +20,6 @@
 
 - [🌟 Features](#-features)
 - [🏗️ System Architecture](#️-system-architecture)
-- [📱 Screenshots](#-screenshots)
 - [🚀 Quick Start Guide](#-quick-start-guide)
 - [💻 Detailed Setup Instructions](#-detailed-setup-instructions)
 - [🔧 Configuration](#-configuration)
@@ -28,7 +27,6 @@
 - [🛠️ Development Scripts](#️-development-scripts)
 - [🚨 Troubleshooting](#-troubleshooting)
 - [🤝 Contributing](#-contributing)
-- [📄 License](#-license)
 
 ---
 
@@ -416,22 +414,6 @@ We welcome contributions to make this project even better! Here's how you can he
 - [ ] **Social Features**: Connect with other tourists safely
 - [ ] **Government Integration**: Direct connection with local authorities
 - [ ] **Blockchain Integration**: Secure digital identity verification
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 🙏 Acknowledgments
-
-- **Flutter Team** for the amazing cross-platform framework
-- **React Team** for the powerful web framework
-- **MongoDB** for the flexible database solution
-- **Google Maps** for location services
-- **Open Source Community** for inspiration and libraries
 
 ---
 
