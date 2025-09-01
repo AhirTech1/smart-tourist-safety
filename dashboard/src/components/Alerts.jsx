@@ -11,15 +11,15 @@ export default function Alerts({ alerts, isLoading }) {
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Alerts History</h1>
+      <h1 className="text-3xl font-bold text-white-800 mb-6">Alerts History</h1>
       <div className="bg-white p-6 rounded-lg shadow-md">
         <ul className="divide-y divide-gray-200">
           {alerts.map(alert => (
             <li key={alert._id} className="py-4">
-              <p className="font-bold text-lg">{alert.type} Alert</p>
-              <p>Tourist: {alert.tourist?.name || 'N/A'}</p>
-              <p>Status: {alert.status}</p>
-              <p>Time: {new Date(alert.timestamp).toLocaleString()}</p>
+              <p className="font-bold text-lg text-gray-500">{alert.type} Alert</p>
+              <p className="text-gray-500">Tourist: {alert.tourist?.name || 'N/A'}</p>
+              <p className="text-gray-500">Status: {alert.status}</p>
+              <p className="text-gray-500">Time: {new Date(alert.timestamp).toLocaleString()}</p>
             </li>
           ))}
         </ul>
