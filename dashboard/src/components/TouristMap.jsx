@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { HeatmapLayer } from 'react-leaflet-heatmap-layer-v3'; // Corrected import
 import HighRiskZones from './HighRiskZones';
@@ -18,12 +18,18 @@ export default function TouristMap({ tourists, alerts }) {
   const [showTourists, setShowTourists] = useState(true);
   const [showHeatmap, setShowHeatmap] = useState(false);
   const [showHighRisk, setShowHighRisk] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const highRiskZonesRef = useRef();
 
   const position = [21.1702, 72.8311]; // Default center (Surat, India)
 
   const heatmapPoints = alerts
     .filter(alert => alert.location && alert.location.latitude && alert.location.longitude)
     .map(alert => [alert.location.latitude, alert.location.longitude, 1]); // latitude, longitude, intensity
+
+  const refreshHighRiskZones = () => {
+    setRefreshKey(prev => prev + 1);
+  };
 
   return (
     <div className="p-8 h-full flex flex-col">
@@ -34,7 +40,7 @@ export default function TouristMap({ tourists, alerts }) {
             onClick={() => setShowTourists(!showTourists)}
             className={classnames('px-4 py-2 rounded-lg text-sm font-medium', {
               'bg-blue-500 text-white': showTourists,
-              'bg-gray-200 dark:bg-gray-700': !showTourists,
+              'bg-gray-200 dark:bg-gray-700 dark:text-gray-300': !showTourists,
             })}
           >
             Tourists
@@ -43,7 +49,7 @@ export default function TouristMap({ tourists, alerts }) {
             onClick={() => setShowHeatmap(!showHeatmap)}
             className={classnames('px-4 py-2 rounded-lg text-sm font-medium', {
               'bg-blue-500 text-white': showHeatmap,
-              'bg-gray-200 dark:bg-gray-700': !showHeatmap,
+              'bg-gray-200 dark:bg-gray-700 dark:text-gray-300': !showHeatmap,
             })}
           >
             Alert Heatmap
@@ -51,12 +57,21 @@ export default function TouristMap({ tourists, alerts }) {
           <button
             onClick={() => setShowHighRisk(!showHighRisk)}
             className={classnames('px-4 py-2 rounded-lg text-sm font-medium', {
-              'bg-blue-500 text-white': showHighRisk,
-              'bg-gray-200 dark:bg-gray-700': !showHighRisk,
+              'bg-red-500 text-white': showHighRisk,
+              'bg-gray-200 dark:bg-gray-700 dark:text-gray-300': !showHighRisk,
             })}
           >
             High-Risk Zones
           </button>
+          {showHighRisk && (
+            <button
+              onClick={refreshHighRiskZones}
+              className="px-4 py-2 rounded-lg text-sm font-medium bg-orange-500 text-white hover:bg-orange-600 transition-colors"
+              title="Refresh high-risk zones data"
+            >
+              🔄 Refresh Zones
+            </button>
+          )}
         </div>
       </div>
       <div className="bg-white p-4 rounded-lg shadow-md flex-grow">
@@ -86,7 +101,7 @@ export default function TouristMap({ tourists, alerts }) {
             />
           )}
 
-          {showHighRisk && <HighRiskZones />}
+          {showHighRisk && <HighRiskZones key={refreshKey} />}
 
         </MapContainer>
       </div>

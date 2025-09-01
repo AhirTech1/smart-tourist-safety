@@ -24,6 +24,11 @@ const apiService = {
      if (!res.ok) throw new Error('Failed to fetch alerts');
     return res.json();
   }),
+
+  getHighRiskZones: () => fetch(`${API_URL}/dashboard/high-risk-zones`).then(res => {
+    if (!res.ok) throw new Error('Failed to fetch high-risk zones');
+    return res.json();
+  }),
 };
 
 export default apiService;

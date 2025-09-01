@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Shield, Map, AlertTriangle, Users, CheckCircle, XCircle } from 'lucide-react';
+import apiService from '../services/apiService';
 
 const LoadingSpinner = () => (
   <div className="flex justify-center items-center h-full w-full">
@@ -34,6 +35,25 @@ const kycStatusPill = (status) => {
 
 
 export default function DashboardHome({ tourists, alerts, isLoading }) {
+  const [highRiskZones, setHighRiskZones] = useState([]);
+  const [highRiskLoading, setHighRiskLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchHighRiskZones = async () => {
+      try {
+        const zones = await apiService.getHighRiskZones();
+        setHighRiskZones(zones);
+      } catch (error) {
+        console.error('Error fetching high-risk zones:', error);
+        setHighRiskZones([]);
+      } finally {
+        setHighRiskLoading(false);
+      }
+    };
+
+    fetchHighRiskZones();
+  }, []);
+
   if (isLoading) return <LoadingSpinner />;
 
   const activeAlerts = alerts.filter(a => a.status === 'Active').length;
@@ -47,9 +67,14 @@ export default function DashboardHome({ tourists, alerts, isLoading }) {
         <StatCard title="Total Tourists" value={tourists.length} icon={<Users className="text-white" />} color="bg-blue-500" />
         <StatCard title="Active Digital IDs" value={kycVerified} icon={<CheckCircle className="text-white" />} color="bg-green-500" />
         <StatCard title="Active Alerts" value={activeAlerts} icon={<AlertTriangle className="text-white" />} color="bg-red-500" />
-        <StatCard title="Expired IDs" value={tourists.filter(t=>t.kycStatus === 'expired').length} icon={<XCircle className="text-white" />} color="bg-yellow-500" />
+        <StatCard 
+          title="High-Risk Zones" 
+          value={highRiskLoading ? '...' : highRiskZones.length} 
+          icon={<Shield className="text-white" />} 
+          color="bg-orange-500" 
+        />
       </div>
-      <div className="grid grid-cols-1">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200">Registered Tourists</h2>
           <div className="overflow-x-auto">
@@ -59,25 +84,53 @@ export default function DashboardHome({ tourists, alerts, isLoading }) {
                   <th scope="col" className="px-6 py-3">Name</th>
                   <th scope="col" className="px-6 py-3">Email</th>
                   <th scope="col" className="px-6 py-3">KYC Status</th>
-                  <th scope="col" className="px-6 py-3">ID Valid Until</th>
                   <th scope="col" className="px-6 py-3">Last Seen</th>
                 </tr>
               </thead>
               <tbody>
-                {tourists.length > 0 ? tourists.map(tourist => (
+                {tourists.length > 0 ? tourists.slice(0, 5).map(tourist => (
                   <tr key={tourist._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                     <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{tourist.name}</td>
                     <td className="px-6 py-4">{tourist.email}</td>
                     <td className="px-6 py-4">{kycStatusPill(tourist.kycStatus)}</td>
-                    <td className="px-6 py-4">{tourist.idValidUntil ? new Date(tourist.idValidUntil).toLocaleDateString() : 'N/A'}</td>
                     <td className="px-6 py-4">{new Date(tourist.lastSeen).toLocaleString()}</td>
                   </tr>
                 )) : (
-                  <tr><td colSpan="5" className="text-center py-4">No tourists registered yet.</td></tr>
+                  <tr><td colSpan="4" className="text-center py-4">No tourists registered yet.</td></tr>
                 )}
               </tbody>
             </table>
           </div>
+        </div>
+        
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200">High-Risk Zones Summary</h2>
+          {highRiskLoading ? (
+            <div className="flex justify-center items-center h-32">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-orange-500"></div>
+            </div>
+          ) : highRiskZones.length > 0 ? (
+            <div className="space-y-3">
+              {highRiskZones.slice(0, 5).map((zone, index) => (
+                <div key={zone._id || index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <div>
+                    <h3 className="font-medium text-gray-800 dark:text-gray-200">{zone.name}</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {zone.riskType || 'High-Alert'} • {zone.radius}m radius
+                    </p>
+                  </div>
+                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                </div>
+              ))}
+              {highRiskZones.length > 5 && (
+                <p className="text-sm text-gray-500 dark:text-gray-400 text-center mt-3">
+                  ... and {highRiskZones.length - 5} more zones
+                </p>
+              )}
+            </div>
+          ) : (
+            <p className="text-center text-gray-500 dark:text-gray-400 py-8">No high-risk zones configured</p>
+          )}
         </div>
       </div>
     </div>
