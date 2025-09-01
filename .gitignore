@@ -1,0 +1,100 @@
+# =========================================
+# Global ignores
+# =========================================
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE/editor settings
+.vscode/
+.idea/
+*.iml
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files
+.env
+.env.*
+
+
+# =========================================
+# Node.js / Express backend (/backend)
+# =========================================
+/backend/node_modules/
+/backend/dist/
+/backend/build/
+/backend/coverage/
+/backend/.env
+/backend/.env.*
+
+
+# =========================================
+# React frontend (/dashboard)
+# =========================================
+/dashboard/node_modules/
+/dashboard/dist/
+/dashboard/build/
+/dashboard/coverage/
+/dashboard/.env
+/dashboard/.env.*
+
+
+# =========================================
+# Flutter / Dart mobile app (/mobile-app)
+# =========================================
+/mobile-app/.dart_tool/
+/mobile-app/.packages
+/mobile-app/.flutter-plugins
+/mobile-app/.flutter-plugins-dependencies
+/mobile-app/build/
+/mobile-app/ios/Flutter/Flutter.framework
+/mobile-app/ios/Flutter/Flutter.podspec
+/mobile-app/ios/ServiceDefinitions.json
+/mobile-app/ios/Runner/GeneratedPluginRegistrant.*
+/mobile-app/pubspec.lock
+
+# Flutter generated files
+flutter_export_environment.sh
+.melody/
+.packages
+
+# Android specific
+/mobile-app/android/.gradle/
+/mobile-app/android/app/build/
+/mobile-app/android/local.properties
+/mobile-app/android/key.properties
+
+# iOS specific
+/mobile-app/ios/Pods/
+/mobile-app/ios/Runner.xcworkspace/
+/mobile-app/ios/Flutter/App.framework
+/mobile-app/ios/Flutter/Flutter.framework
+/mobile-app/ios/Flutter/Generated.xcconfig
+/mobile-app/ios/Flutter/ephemeral/
+/mobile-app/ios/Podfile.lock
+
+
+# =========================================
+# Miscellaneous
+# =========================================
+# Compiled binaries
+*.exe
+*.out
+*.app
+*.apk
+*.ipa
+
+# Coverage reports
+coverage/
+lcov.info
+
+# Temporary files
+tmp/
+temp/
+.cache/
