@@ -14,14 +14,6 @@ AI-Powered Anomaly Detection to flag missing, silent, or distress situations.
 
 End-to-End Encryption & Privacy Controls ensuring compliance with DPDP Act 2023.
 
-Repository Structure:
-
-smart-tourist-safety/
-├── backend/       # Node.js API & services
-├── dashboard/     # React admin dashboard
-├── mobile-app/    # Flutter tourist app
-└── docs/          # Architecture diagrams & API specs
-
 
 Tech Stack:
 
@@ -45,20 +37,10 @@ npm run dev
 # Dashboard
 cd ../dashboard
 npm install
-npm start
+npm run dev
 
 # Mobile app
 cd ../mobile-app
 flutter pub get
 flutter run
 
-
-Deployment:
-
-Backend → Render/Railway/Heroku
-
-Dashboard → Vercel/Netlify
-
-Mobile App → Build APK using Flutter or distribute via Play Store
-
-This project is being developed as part of a smart safety initiative. Contributions are welcome from teammates via pull requests.
