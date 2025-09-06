@@ -2,20 +2,29 @@
   "name": "smart-tourist-safety-backend",
   "version": "1.0.0",
   "description": "Backend for the Smart Tourist Safety Monitoring System",
-  "main": "src/index.js",
+  "main": "index.js",
+  "engines": {
+    "node": "18"
+  },
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "test": "node testAI.js",
+    "setup": "node createTestData.js && node seedCrimeData.js",
+    "test-full": "npm run setup && npm test"
   },
   "keywords": [
     "tourist",
     "safety",
     "monitoring",
-    "sih"
+    "sih",
+    "ai"
   ],
   "author": "TeamEvolv",
   "license": "ISC",
   "dependencies": {
+    "@huggingface/inference": "^4.7.1",
+    "axios": "^1.11.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.6.1",
