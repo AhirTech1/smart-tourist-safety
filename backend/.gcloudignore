@@ -18,4 +18,37 @@ tests/
 createTestData.js
 testAI.js
 seedCrimeData.js
+seedHighRiskZones.js
+
+# Additional files to ignore for deployment
+README.md
+*.md
+docs/
+deploy-gcp.sh
+Dockerfile
+docker-compose.yml
+.dockerignore
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+build/
+dist/
+tmp/
+temp/
+logs/
+
+# Ignore any backup or temporary files
+*.bak
+*.tmp
+.backup/
+
+# Ignore Google Cloud SDK (should not be in project directory)
+sih-2025/
+google-cloud-sdk/
+
+# Ignore any other large directories that might have been created
+.cache/
+.npm/
 setup-and-test.sh

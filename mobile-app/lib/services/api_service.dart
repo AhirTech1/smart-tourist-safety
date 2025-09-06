@@ -1,64 +1,85 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  // Use 10.0.2.2 for Android emulator to connect to localhost on your computer
-  static const String _baseUrl = 'http://192.168.1.69:5000/api';
-
-  // Login method
+  // GCP App Engine URL - No hibernation, always fast!
+  static const String _baseUrl = 'https://sih-2025-471306.el.r.appspot.com/api';
+  
+  // HTTP client with timeout configuration
+  static final http.Client _client = http.Client();
+  
+  // Reduced timeout since GCP is always-on (no cold starts)
+  static const Duration _timeout = Duration(seconds: 30);
+  
+  // Login method - simplified for GCP (no wake-up needed)
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
-      final response = await http.post(
-        Uri.parse('$_baseUrl/auth/login'), // Corrected endpoint
-        headers: {'Content-Type': 'application/json'},
+      final fullUrl = '$_baseUrl/auth/login';
+      print('Attempting login to: $fullUrl');
+      
+      final response = await _client.post(
+        Uri.parse(fullUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'User-Agent': 'SmartTouristApp/1.0',
+        },
         body: jsonEncode({'email': email, 'password': password}),
-      );
+      ).timeout(_timeout);
+      
+      print('Login response status: ${response.statusCode}');
       return _handleResponse(response);
+    } on SocketException catch (e) {
+      print('Network Error (SocketException): $e');
+      return {'error': true, 'message': 'No internet connection. Please check your network.'};
+    } on HttpException catch (e) {
+      print('HTTP Error: $e');
+      return {'error': true, 'message': 'Server connection failed. Please try again.'};
+    } on FormatException catch (e) {
+      print('Format Error: $e');
+      return {'error': true, 'message': 'Invalid server response format.'};
     } catch (e) {
-      print('Network Error on login: $e');
-      return {'error': true, 'message': 'Could not connect to the server.'};
+      print('Unexpected Error on login: $e');
+      return {'error': true, 'message': 'Could not connect to the server. Please try again later.'};
     }
   }
 
-  // Registers a new tourist with all required fields
-  Future<Map<String, dynamic>> registerTourist({
-    required String name,
-    required String email,
-    required String phoneNumber,
-    required String password,
-    required int tripDuration,
-    String? tripItinerary,
-    String? idNumber,
-    required List<Map<String, dynamic>> emergencyContacts,
-  }) async {
+  // Register method - simplified for GCP (no wake-up needed)
+  Future<Map<String, dynamic>> register(String name, String email, String password, String phoneNumber) async {
     try {
-      final Map<String, dynamic> body = {
+      final fullUrl = '$_baseUrl/auth/register';
+      print('Attempting registration to: $fullUrl');
+      
+      final response = await _client.post(
+        Uri.parse(fullUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'User-Agent': 'SmartTouristApp/1.0',
+        },
+        body: jsonEncode({
           'name': name,
           'email': email,
-          'phoneNumber': phoneNumber,
           'password': password,
-          'tripDuration': tripDuration,
-          'tripItinerary': tripItinerary ?? '',
-          'emergencyContacts': emergencyContacts,
-        };
-
-      if (idNumber != null && idNumber.isNotEmpty) {
-        if (idNumber.replaceAll(' ', '').length == 12) {
-          body['aadharNumber'] = idNumber;
-        } else {
-          body['passportNumber'] = idNumber;
-        }
-      }
-
-      final response = await http.post(
-        Uri.parse('$_baseUrl/auth/register'), // 1. CORRECTED ENDPOINT
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(body),
-      );
+          'phoneNumber': phoneNumber,
+        }),
+      ).timeout(_timeout);
+      
+      print('Registration response status: ${response.statusCode}');
       return _handleResponse(response);
+    } on SocketException catch (e) {
+      print('Network Error (SocketException): $e');
+      return {'error': true, 'message': 'No internet connection. Please check your network.'};
+    } on HttpException catch (e) {
+      print('HTTP Error: $e');
+      return {'error': true, 'message': 'Server connection failed. Please try again.'};
+    } on FormatException catch (e) {
+      print('Format Error: $e');
+      return {'error': true, 'message': 'Invalid server response format.'};
     } catch (e) {
-      print('Network Error on registerTourist: $e');
-      return {'error': true, 'message': 'Could not connect to the server.'};
+      print('Unexpected Error on registration: $e');
+      return {'error': true, 'message': 'Could not connect to the server. Please try again later.'};
     }
   }
 
@@ -66,38 +87,52 @@ class ApiService {
   Future<Map<String, dynamic>> updateLocation(
       String touristId, double latitude, double longitude) async {
     try {
-      final response = await http.post(
-        Uri.parse('$_baseUrl/tourist/location/$touristId'), // Use touristId, not deviceId
-        headers: {'Content-Type': 'application/json'},
+      final response = await _client.post(
+        Uri.parse('$_baseUrl/tourist/location/$touristId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
         body: jsonEncode({'latitude': latitude, 'longitude': longitude}),
-      );
+      ).timeout(_timeout);
       return _handleResponse(response);
     } catch (e) {
       print('Network Error on updateLocation: $e');
-      return {'error': true, 'message': 'Could not connect to the server.'};
+      if (e.toString().contains('TimeoutException')) {
+        return {'error': true, 'message': 'Location update timeout. Please try again.'};
+      }
+      return {'error': true, 'message': 'Could not update location.'};
     }
   }
 
   // Triggers a panic alert for a device
   Future<Map<String, dynamic>> triggerPanic(String touristId) async {
     try {
-      final response = await http.post(
-        Uri.parse('$_baseUrl/tourist/panic/$touristId'), // Use touristId
-        headers: {'Content-Type': 'application/json'},
-      );
+      final response = await _client.post(
+        Uri.parse('$_baseUrl/tourist/panic/$touristId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      ).timeout(_timeout);
       return _handleResponse(response);
     } catch (e) {
       print('Network Error on triggerPanic: $e');
-      return {'error': true, 'message': 'Could not connect to the server.'};
+      if (e.toString().contains('TimeoutException')) {
+        return {'error': true, 'message': 'Panic alert timeout. Please try again.'};
+      }
+      return {'error': true, 'message': 'Could not send panic alert.'};
     }
   }
 
   // Fetches high-risk zones
   Future<List<dynamic>> getHighRiskZones() async {
     try {
-      final response = await http.get(
+      final response = await _client.get(
         Uri.parse('$_baseUrl/dashboard/high-risk-zones'),
-      );
+        headers: {'Accept': 'application/json'},
+      ).timeout(_timeout);
+      
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       }
@@ -108,18 +143,81 @@ class ApiService {
     }
   }
 
+  // Test connection method - simplified
+  Future<Map<String, dynamic>> testConnection() async {
+    try {
+      // Test the health check endpoint first
+      print('Testing basic connection to: https://smart-tourist-safety.onrender.com/');
+      
+      final healthResponse = await _client.get(
+        Uri.parse('https://smart-tourist-safety.onrender.com/'),
+        headers: {'Accept': 'application/json'},
+      ).timeout(_timeout);
+      
+      print('Health check response status: ${healthResponse.statusCode}');
+      print('Health check response body: ${healthResponse.body}');
+      
+      if (healthResponse.statusCode == 200) {
+        // Now test the API status endpoint
+        print('Testing API status endpoint: https://smart-tourist-safety.onrender.com/api/status');
+        
+        final statusResponse = await _client.get(
+          Uri.parse('https://smart-tourist-safety.onrender.com/api/status'),
+          headers: {'Accept': 'application/json'},
+        ).timeout(_timeout);
+        
+        print('API status response status: ${statusResponse.statusCode}');
+        print('API status response body: ${statusResponse.body}');
+        
+        if (statusResponse.statusCode == 200) {
+          return {'success': true, 'data': jsonDecode(statusResponse.body)};
+        } else {
+          return {'error': true, 'message': 'API status endpoint failed with status ${statusResponse.statusCode}'};
+        }
+      } else {
+        return {'error': true, 'message': 'Health check failed with status ${healthResponse.statusCode}'};
+      }
+    } catch (e) {
+      print('Test connection error: $e');
+      return {'error': true, 'message': 'Connection test failed: $e'};
+    }
+  }
+
   // Helper to decode response and handle errors
   Map<String, dynamic> _handleResponse(http.Response response) {
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      return jsonDecode(response.body);
-    } else {
-      print('API Error: ${response.statusCode} - ${response.body}');
-      final errorBody = jsonDecode(response.body);
+    try {
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final decoded = jsonDecode(response.body);
+        return decoded;
+      } else {
+        print('API Error: ${response.statusCode} - ${response.body}');
+        try {
+          final errorBody = jsonDecode(response.body);
+          return {
+            'error': true,
+            'message': errorBody['message'] ?? 'API Error: ${response.statusCode}',
+            'details': errorBody
+          };
+        } catch (e) {
+          return {
+            'error': true,
+            'message': 'Server Error: ${response.statusCode}',
+            'details': response.body
+          };
+        }
+      }
+    } catch (e) {
+      print('Response parsing error: $e');
       return {
         'error': true,
-        'message': 'API Error: ${response.statusCode}',
-        'details': errorBody
+        'message': 'Invalid response format',
+        'details': response.body
       };
     }
+  }
+  
+  // Cleanup method
+  static void dispose() {
+    _client.close();
   }
 }

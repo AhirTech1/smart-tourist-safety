@@ -33,6 +33,10 @@ pnpm-debug.log*
 /backend/.env
 /backend/.env.*
 
+# Google Cloud SDK (contains thousands of files)
+/backend/sih-2025/
+/backend/google-cloud-sdk/
+
 
 # =========================================
 # React frontend (/dashboard)
@@ -78,6 +82,51 @@ flutter_export_environment.sh
 /mobile-app/ios/Flutter/Generated.xcconfig
 /mobile-app/ios/Flutter/ephemeral/
 /mobile-app/ios/Podfile.lock
+
+# Flutter build outputs (most likely cause of 10k+ files)
+/mobile-app/build/
+/mobile-app/android/app/build/
+/mobile-app/android/.gradle/
+/mobile-app/ios/build/
+/mobile-app/linux/build/
+/mobile-app/macos/build/
+/mobile-app/windows/build/
+/mobile-app/web/build/
+
+# Flutter cache and temporary files
+/mobile-app/.flutter-plugins
+/mobile-app/.flutter-plugins-dependencies
+/mobile-app/.dart_tool/
+/mobile-app/.packages
+
+# Xcode workspace and build files
+/mobile-app/ios/Runner.xcworkspace/
+/mobile-app/ios/Pods/
+/mobile-app/ios/build/
+/mobile-app/macos/Runner.xcworkspace/
+/mobile-app/macos/Pods/
+/mobile-app/macos/build/
+
+# Android Gradle and build files
+/mobile-app/android/.gradle/
+/mobile-app/android/app/build/
+/mobile-app/android/build/
+/mobile-app/android/gradle/
+/mobile-app/android/gradlew
+/mobile-app/android/gradlew.bat
+
+# Plugin-specific generated files
+/mobile-app/build/flutter_plugin_android_lifecycle/
+/mobile-app/build/geolocator_android/
+/mobile-app/build/google_maps_flutter_android/
+/mobile-app/build/path_provider_android/
+/mobile-app/build/native_assets/
+
+# All build directories recursively
+**/build/
+**/.gradle/
+**/Pods/
+**/.dart_tool/
 
 
 # =========================================
