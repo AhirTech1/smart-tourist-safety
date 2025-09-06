@@ -83,6 +83,57 @@ class ApiService {
     }
   }
 
+  // Register Tourist method with named parameters for detailed registration
+  Future<Map<String, dynamic>> registerTourist({
+    required String name,
+    required String email,
+    required String phoneNumber,
+    required String password,
+    required int tripDuration,
+    required String tripItinerary,
+    required String idNumber,
+    required List<Map<String, String>> emergencyContacts,
+  }) async {
+    try {
+      final fullUrl = '$_baseUrl/auth/register';
+      print('Attempting tourist registration to: $fullUrl');
+      
+      final response = await _client.post(
+        Uri.parse(fullUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'User-Agent': 'SmartTouristApp/1.0',
+        },
+        body: jsonEncode({
+          'name': name,
+          'email': email,
+          'password': password,
+          'phoneNumber': phoneNumber,
+          'tripDuration': tripDuration,
+          'tripItinerary': tripItinerary,
+          'idNumber': idNumber,
+          'emergencyContacts': emergencyContacts,
+        }),
+      ).timeout(_timeout);
+      
+      print('Tourist registration response status: ${response.statusCode}');
+      return _handleResponse(response);
+    } on SocketException catch (e) {
+      print('Network Error (SocketException): $e');
+      return {'error': true, 'message': 'No internet connection. Please check your network.'};
+    } on HttpException catch (e) {
+      print('HTTP Error: $e');
+      return {'error': true, 'message': 'Server connection failed. Please try again.'};
+    } on FormatException catch (e) {
+      print('Format Error: $e');
+      return {'error': true, 'message': 'Invalid server response format.'};
+    } catch (e) {
+      print('Unexpected Error on tourist registration: $e');
+      return {'error': true, 'message': 'Could not connect to the server. Please try again later.'};
+    }
+  }
+
   // Updates the tourist's location
   Future<Map<String, dynamic>> updateLocation(
       String touristId, double latitude, double longitude) async {

@@ -1,17 +1,18 @@
-runtime: nodejs20
+runtime: nodejs22
+env: standard
+
+automatic_scaling:
+  min_instances: 0
+  max_instances: 10
+  target_cpu_utilization: 0.6
 
 env_variables:
+  NODE_ENV: "production"
   MONGO_URI: "mongodb+srv://test_db_user:TeamEvolvUsr101@test-cluster-phase1.0savtn1.mongodb.net/"
   HUGGINGFACE_API_KEY: "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"
   RISK_THRESHOLD: "0.7"
   ANOMALY_DETECTION_RADIUS: "1000"
   PORT: "8080"
-
-# Automatic scaling configuration
-automatic_scaling:
-  min_instances: 1  # Always keep 1 instance running (no cold starts!)
-  max_instances: 10
-  target_cpu_utilization: 0.6
 
 # Instance class (affects performance and cost)
 instance_class: F2  # F1 (cheapest) to F4 (fastest)
