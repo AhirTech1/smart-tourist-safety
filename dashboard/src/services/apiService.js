@@ -1,6 +1,6 @@
 // This file centralizes all API calls for the dashboard.
-// Updated to use GCP App Engine backend URL
-const API_URL = 'https://sih-2025-471306.el.r.appspot.com/api';
+// Updated to use environment variable for backend URL
+const API_URL = import.meta.env.VITE_API_URL || 'https://sih-2025-471306.el.r.appspot.com/api';
 
 const apiService = {
   // NOTE: Admin login endpoint doesn't exist yet in the backend.

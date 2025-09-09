@@ -1,9 +1,23 @@
 import { defineConfig } from 'vite'
-import postcss from '@tailwindcss/postcss'
+import react from '@vitejs/plugin-react'
 
 export default defineConfig({
-  plugins: [],
-  css: {
-    postcss
-  }
+  plugins: [react()],
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      },
+    },
+  },
+  server: {
+    port: 3000,
+    host: true,
+  },
+  preview: {
+    port: 3000,
+    host: true,
+  },
 })

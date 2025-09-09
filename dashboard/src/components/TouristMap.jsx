@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { HeatmapLayer } from 'react-leaflet-heatmap-layer-v3'; // Corrected import
+import { MapContainer, TileLayer, Marker, Popup, CircleMarker } from 'react-leaflet';
 import HighRiskZones from './HighRiskZones';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -16,16 +15,12 @@ L.Icon.Default.mergeOptions({
 
 export default function TouristMap({ tourists, alerts }) {
   const [showTourists, setShowTourists] = useState(true);
-  const [showHeatmap, setShowHeatmap] = useState(false);
+  const [showAlerts, setShowAlerts] = useState(false);
   const [showHighRisk, setShowHighRisk] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const highRiskZonesRef = useRef();
 
   const position = [21.1702, 72.8311]; // Default center (Surat, India)
-
-  const heatmapPoints = alerts
-    .filter(alert => alert.location && alert.location.latitude && alert.location.longitude)
-    .map(alert => [alert.location.latitude, alert.location.longitude, 1]); // latitude, longitude, intensity
 
   const refreshHighRiskZones = () => {
     setRefreshKey(prev => prev + 1);
@@ -46,13 +41,13 @@ export default function TouristMap({ tourists, alerts }) {
             Tourists
           </button>
           <button
-            onClick={() => setShowHeatmap(!showHeatmap)}
+            onClick={() => setShowAlerts(!showAlerts)}
             className={classnames('px-4 py-2 rounded-lg text-sm font-medium', {
-              'bg-blue-500 text-white': showHeatmap,
-              'bg-gray-200 dark:bg-gray-700 dark:text-gray-300': !showHeatmap,
+              'bg-red-500 text-white': showAlerts,
+              'bg-gray-200 dark:bg-gray-700 dark:text-gray-300': !showAlerts,
             })}
           >
-            Alert Heatmap
+            Alert Markers
           </button>
           <button
             onClick={() => setShowHighRisk(!showHighRisk)}
@@ -91,15 +86,26 @@ export default function TouristMap({ tourists, alerts }) {
             </Marker>
           ))}
           
-          {showHeatmap && (
-            <HeatmapLayer
-              points={heatmapPoints}
-              longitudeExtractor={m => m[1]}
-              latitudeExtractor={m => m[0]}
-              intensityExtractor={m => parseFloat(m[2])}
-              radius={20}
-            />
-          )}
+          {showAlerts && alerts.map((alert, index) => (
+            (alert.location && alert.location.latitude && alert.location.longitude) &&
+            <CircleMarker 
+              key={`alert-${index}`}
+              center={[alert.location.latitude, alert.location.longitude]}
+              radius={8}
+              pathOptions={{ 
+                color: 'red', 
+                fillColor: '#ff4444', 
+                fillOpacity: 0.6,
+                weight: 2
+              }}
+            >
+              <Popup>
+                <b>Alert</b><br />
+                Type: {alert.type || 'General Alert'}<br />
+                Time: {alert.timestamp ? new Date(alert.timestamp).toLocaleString() : 'Unknown'}
+              </Popup>
+            </CircleMarker>
+          ))}
 
           {showHighRisk && <HighRiskZones key={refreshKey} />}
 
