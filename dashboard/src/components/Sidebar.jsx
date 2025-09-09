@@ -3,11 +3,11 @@ import { Shield, Map, AlertTriangle, BarChart2, Users, LogOut } from 'lucide-rea
 
 export default function Sidebar({ currentView, setCurrentView, onLogout }) {
   const navItems = [
-    { name: 'Dashboard', icon: <BarChart2 size={20} />, view: 'DashboardHome' },
-    { name: 'Live Map', icon: <Map size={20} />, view: 'TouristMap' },
-    { name: 'Alerts', icon: <AlertTriangle size={20} />, view: 'Alerts' },
-    { name: 'Reports', icon: <Users size={20} />, view: 'Reports' },
-    { name: 'Statistics', icon: <Shield size={20} />, view: 'Statistics' },
+    { name: 'Dashboard', icon: <BarChart2 size={20} />, view: 'home' },
+    { name: 'Live Map', icon: <Map size={20} />, view: 'map' },
+    { name: 'Alerts', icon: <AlertTriangle size={20} />, view: 'alerts' },
+    { name: 'Reports', icon: <Users size={20} />, view: 'reports' },
+    { name: 'Statistics', icon: <Shield size={20} />, view: 'statistics' },
   ];
 
   return (
@@ -18,11 +18,10 @@ export default function Sidebar({ currentView, setCurrentView, onLogout }) {
       </div>
       <nav className="flex-1 px-4 py-6">
         {navItems.map(item => (
-          <a
+          <button
             key={item.name}
-            href="#"
-            onClick={(e) => { e.preventDefault(); setCurrentView(item.view); }}
-            className={`flex items-center px-4 py-3 my-1 rounded-lg transition-colors ${
+            onClick={() => setCurrentView(item.view)}
+            className={`w-full flex items-center px-4 py-3 my-1 rounded-lg transition-colors text-left ${
               currentView === item.view
                 ? 'bg-blue-600 text-white'
                 : 'text-gray-300 hover:bg-gray-700 hover:text-white'
@@ -30,14 +29,17 @@ export default function Sidebar({ currentView, setCurrentView, onLogout }) {
           >
             {item.icon}
             <span className="ml-4">{item.name}</span>
-          </a>
+          </button>
         ))}
       </nav>
       <div className="p-4 border-t border-gray-700">
-        <a href="#" onClick={(e) => {e.preventDefault(); onLogout()}} className="flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white">
+        <button 
+          onClick={onLogout} 
+          className="w-full flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white text-left"
+        >
           <LogOut size={20}/>
           <span className="ml-4">Logout</span>
-        </a>
+        </button>
       </div>
     </div>
   );

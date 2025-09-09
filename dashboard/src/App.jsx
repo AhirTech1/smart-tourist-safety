@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import DashboardView from './views/DashboardView';
 import LoginView from './views/LoginView';
 
@@ -49,9 +49,10 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" /> : <LoginView onLogin={handleLogin} />} />
-        <Route path="/dashboard" element={isAuthenticated ? <DashboardView onLogout={handleLogout} /> : <Navigate to="/" />} />
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginView onLogin={handleLogin} />} />
+        <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginView onLogin={handleLogin} />} />
+        <Route path="/dashboard/*" element={isAuthenticated ? <DashboardView onLogout={handleLogout} /> : <Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />} />
       </Routes>
     </Router>
   );
