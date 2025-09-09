@@ -5,12 +5,20 @@ import LoginView from './views/LoginView';
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Simple session persistence check
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      setIsAuthenticated(true);
+    console.log('App useEffect running...');
+    try {
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        setIsAuthenticated(true);
+      }
+    } catch (error) {
+      console.error('Error checking auth token:', error);
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
@@ -23,6 +31,20 @@ export default function App() {
     localStorage.removeItem('authToken'); // Clear the token
     setIsAuthenticated(false);
   };
+
+  if (isLoading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        fontFamily: 'Arial, sans-serif' 
+      }}>
+        <div>Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <Router>
