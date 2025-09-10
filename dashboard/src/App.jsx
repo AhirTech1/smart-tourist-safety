@@ -1,59 +1,76 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import DashboardView from './views/DashboardView';
 import LoginView from './views/LoginView';
+import LoadingSpinner from './components/LoadingSpinner';
 
-export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Simple session persistence check
-  useEffect(() => {
-    console.log('App useEffect running...');
-    try {
-      const token = localStorage.getItem('authToken');
-      if (token) {
-        setIsAuthenticated(true);
-      }
-    } catch (error) {
-      console.error('Error checking auth token:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  const handleLogin = () => {
-    localStorage.setItem('authToken', 'fake-jwt-token'); // Store a token
-    setIsAuthenticated(true);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('authToken'); // Clear the token
-    setIsAuthenticated(false);
-  };
-
+// Protected Route Component
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, isLoading } = useAuth();
+  
   if (isLoading) {
-    return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh',
-        fontFamily: 'Arial, sans-serif' 
-      }}>
-        <div>Loading...</div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
+  
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
+};
+
+// Public Route Component (redirects to dashboard if already authenticated)
+const PublicRoute = ({ children }) => {
+  const { isAuthenticated, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+  
+  return !isAuthenticated ? children : <Navigate to="/dashboard" replace />;
+};
+
+// Main App Routes Component
+const AppRoutes = () => {
+  const { logout } = useAuth();
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginView onLogin={handleLogin} />} />
-        <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginView onLogin={handleLogin} />} />
-        <Route path="/dashboard/*" element={isAuthenticated ? <DashboardView onLogout={handleLogout} /> : <Navigate to="/login" replace />} />
-        <Route path="*" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />} />
+        <Route 
+          path="/" 
+          element={
+            <PublicRoute>
+              <LoginView />
+            </PublicRoute>
+          } 
+        />
+        <Route 
+          path="/login" 
+          element={
+            <PublicRoute>
+              <LoginView />
+            </PublicRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard/*" 
+          element={
+            <ProtectedRoute>
+              <DashboardView onLogout={logout} />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="*" 
+          element={<Navigate to="/login" replace />} 
+        />
       </Routes>
     </Router>
+  );
+};
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppRoutes />
+    </AuthProvider>
   );
 }

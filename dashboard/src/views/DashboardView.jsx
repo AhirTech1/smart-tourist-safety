@@ -65,6 +65,8 @@ export default function DashboardView({ onLogout }) {
         <Route path="/alerts" element={<Alerts alerts={alerts} isLoading={isLoading}/>} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/statistics" element={<Statistics />} />
+        <Route path="/users" element={<div className="p-8"><h2 className="text-2xl font-bold">User Management</h2><p className="text-gray-600 mt-4">Coming soon...</p></div>} />
+        <Route path="/settings" element={<div className="p-8"><h2 className="text-2xl font-bold">System Settings</h2><p className="text-gray-600 mt-4">Coming soon...</p></div>} />
         <Route path="*" element={<DashboardHome tourists={tourists} alerts={alerts} isLoading={isLoading}/>} />
       </Routes>
     );

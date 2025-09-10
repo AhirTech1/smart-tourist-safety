@@ -24,9 +24,22 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['tourist', 'admin', 'emergency_contact'],
+    enum: ['tourist', 'admin', 'super_admin', 'moderator', 'emergency_contact'],
     default: 'tourist',
   },
+  permissions: [{
+    type: String,
+    enum: [
+      'view_dashboard',
+      'manage_users',
+      'manage_alerts',
+      'manage_zones',
+      'view_analytics',
+      'system_settings',
+      'user_management',
+      'emergency_response'
+    ]
+  }],
   emergencyContacts: [{
     name: {
       type: String,

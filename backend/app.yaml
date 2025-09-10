@@ -10,6 +10,7 @@ env_variables:
   NODE_ENV: "production"
   MONGO_URI: "mongodb+srv://test_db_user:TeamEvolvUsr101@test-cluster-phase1.0savtn1.mongodb.net/"
   HUGGINGFACE_API_KEY: "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"
+  JWT_SECRET: "SmartTouristSafety2025!SecureJWTKey#GCP"
   RISK_THRESHOLD: "0.7"
   ANOMALY_DETECTION_RADIUS: "1000"
   PORT: "8080"

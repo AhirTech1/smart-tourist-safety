@@ -11,13 +11,22 @@ const touristRoutes = require('./routes/touristRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const authRoutes = require('./routes/auth_routes');
 const aiRoutes = require('./routes/aiRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
 
 // Middleware
 app.use(cors({
-  origin: true, // Allow all origins
-  credentials: true
+  origin: [
+    'http://localhost:3000', 
+    'http://localhost:5173',
+    'https://smarttouristsafety.vercel.app',
+    'https://*.vercel.app'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  optionsSuccessStatus: 200
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
@@ -74,6 +83,7 @@ app.use('/api/tourist', touristRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check route
 app.get('/', (req, res) => {
