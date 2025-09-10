@@ -68,6 +68,8 @@ export default function Sidebar({ currentView, setCurrentView, onLogout }) {
         return <Shield size={16} className="text-blue-400" />;
       case 'moderator':
         return <UserCheck size={16} className="text-green-400" />;
+      case 'viewer':
+        return <Users size={16} className="text-purple-400" />;
       default:
         return <Users size={16} className="text-gray-400" />;
     }
@@ -81,6 +83,8 @@ export default function Sidebar({ currentView, setCurrentView, onLogout }) {
         return 'Administrator';
       case 'moderator':
         return 'Moderator';
+      case 'viewer':
+        return 'Viewer';
       default:
         return 'User';
     }

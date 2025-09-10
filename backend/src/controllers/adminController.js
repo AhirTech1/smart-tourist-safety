@@ -25,6 +25,10 @@ const ROLE_PERMISSIONS = {
     'view_dashboard',
     'manage_alerts',
     'view_analytics'
+  ],
+  viewer: [
+    'view_dashboard',
+    'view_analytics'
   ]
 };
 
@@ -40,7 +44,7 @@ exports.adminLogin = async (req, res) => {
     // Find user by email and check if they have admin privileges
     const user = await User.findOne({ 
       email: email.toLowerCase(),
-      role: { $in: ['admin', 'super_admin', 'moderator'] },
+      role: { $in: ['admin', 'super_admin', 'moderator', 'viewer'] },
       isActive: true
     });
 
@@ -102,7 +106,7 @@ exports.createAdmin = async (req, res) => {
       return res.status(400).json({ message: 'Name, email, and password are required' });
     }
 
-    if (!['admin', 'super_admin', 'moderator'].includes(role)) {
+    if (!['admin', 'super_admin', 'moderator', 'viewer'].includes(role)) {
       return res.status(400).json({ message: 'Invalid role specified' });
     }
 
@@ -173,7 +177,7 @@ exports.getProfile = async (req, res) => {
 exports.listAdmins = async (req, res) => {
   try {
     const admins = await User.find({
-      role: { $in: ['admin', 'super_admin', 'moderator'] }
+      role: { $in: ['admin', 'super_admin', 'moderator', 'viewer'] }
     }).select('-password').sort({ createdAt: -1 });
 
     const adminsWithPermissions = admins.map(admin => ({

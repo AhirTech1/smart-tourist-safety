@@ -25,7 +25,7 @@ router.post('/create', adminController.createAdmin);
 // @route   GET /api/admin/profile
 // @desc    Get current admin profile
 // @access  Private (admin+)
-router.get('/profile', authenticateToken, authorizeRoles('admin', 'super_admin', 'moderator'), adminController.getProfile);
+router.get('/profile', authenticateToken, authorizeRoles('admin', 'super_admin', 'moderator', 'viewer'), adminController.getProfile);
 
 // @route   GET /api/admin/list
 // @desc    List all admin users

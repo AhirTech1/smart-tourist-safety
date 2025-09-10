@@ -24,6 +24,13 @@ export default function LoginView() {
     }
   };
 
+  // Auto-fill credentials
+  const fillCredentials = (userEmail, userPassword) => {
+    setEmail(userEmail);
+    setPassword(userPassword);
+    setError('');
+  };
+
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
@@ -96,9 +103,37 @@ export default function LoginView() {
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-xs text-gray-500 dark:text-gray-400">
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
             Secure access for authorized personnel only
           </p>
+          
+          {/* Temporary Demo Credentials */}
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 text-left">
+            <h3 className="text-sm font-semibold text-blue-800 dark:text-blue-300 mb-2">
+              🔍 Demo Credentials (For Jury/Testing)
+            </h3>
+            <div className="space-y-2 text-xs">
+              <div 
+                className="bg-white dark:bg-gray-800 p-2 rounded border cursor-pointer hover:bg-yellow-50 dark:hover:bg-yellow-900/20 transition-colors"
+                onClick={() => fillCredentials('admin@smarttouristsafety.com', 'SuperAdmin@2025')}
+              >
+                <div className="font-medium text-yellow-700 dark:text-yellow-400">Super Admin (Full Access):</div>
+                <div className="text-gray-600 dark:text-gray-300">📧 admin@smarttouristsafety.com</div>
+                <div className="text-gray-600 dark:text-gray-300">🔑 SuperAdmin@2025</div>
+              </div>
+              <div 
+                className="bg-white dark:bg-gray-800 p-2 rounded border cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors"
+                onClick={() => fillCredentials('viewer@smarttouristsafety.com', 'Viewer@2025')}
+              >
+                <div className="font-medium text-purple-700 dark:text-purple-400">Viewer (Read-only):</div>
+                <div className="text-gray-600 dark:text-gray-300">📧 viewer@smarttouristsafety.com</div>
+                <div className="text-gray-600 dark:text-gray-300">🔑 Viewer@2025</div>
+              </div>
+            </div>
+            <p className="text-xs text-blue-600 dark:text-blue-400 mt-2">
+              💡 Click on any credential box to auto-fill the form
+            </p>
+          </div>
         </div>
       </div>
     </div>
