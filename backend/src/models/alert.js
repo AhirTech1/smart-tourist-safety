@@ -48,6 +48,12 @@ const alertSchema = new mongoose.Schema({
     description: String,
     severity: Number,
   }],
+  metadata: {
+    locationSource: String, // 'live_gps', 'stored', 'unknown'
+    timestamp: Date,
+    accuracy: String,
+    additionalData: mongoose.Schema.Types.Mixed,
+  },
   nearestEmergencyServices: [{
     type: {
       type: String,

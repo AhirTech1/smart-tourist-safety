@@ -81,7 +81,38 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _triggerPanic() async {
     final id = widget.tourist['id'];
     if (id == null) return;
-    final response = await _apiService.triggerPanic(id);
+    
+    // Try to get current location for the panic alert
+    double? latitude;
+    double? longitude;
+    
+    try {
+      // Check if location services are enabled
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (serviceEnabled) {
+        // Check location permission
+        LocationPermission permission = await Geolocator.checkPermission();
+        if (permission == LocationPermission.denied) {
+          permission = await Geolocator.requestPermission();
+        }
+        
+        if (permission != LocationPermission.denied && permission != LocationPermission.deniedForever) {
+          // Get current position with a timeout
+          Position position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high,
+            timeLimit: const Duration(seconds: 10),
+          );
+          latitude = position.latitude;
+          longitude = position.longitude;
+          debugPrint("Emergency location captured: $latitude, $longitude");
+        }
+      }
+    } catch (e) {
+      debugPrint("Could not get location for panic alert: $e");
+      // Continue without location - panic alert is more important than location
+    }
+    
+    final response = await _apiService.triggerPanic(id, latitude: latitude, longitude: longitude);
     if (mounted) _showApiResponse('Panic Alert', response);
   }
 

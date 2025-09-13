@@ -32,6 +32,7 @@ exports.updateLocation = async (req, res) => {
       {
         'location.latitude': latitude,
         'location.longitude': longitude,
+        'location.timestamp': new Date(),
         lastSeen: Date.now(),
       },
       { new: true } 
@@ -51,23 +52,54 @@ exports.updateLocation = async (req, res) => {
 exports.triggerPanic = async (req, res) => {
   try {
     const { id } = req.params; // UPDATED: Changed from deviceId to id
+    const { location: liveLocation } = req.body; // Get live location from request if available
     const tourist = await Tourist.findById(id); // UPDATED: Changed to findById
 
     if (!tourist) {
       return res.status(404).json({ message: 'Tourist not found' });
     }
 
+    // Use live location if provided, otherwise fall back to stored location
+    let alertLocation = tourist.location;
+    let locationSource = 'stored';
+    
+    if (liveLocation && liveLocation.latitude && liveLocation.longitude) {
+      alertLocation = {
+        latitude: liveLocation.latitude,
+        longitude: liveLocation.longitude,
+        timestamp: liveLocation.timestamp || new Date(),
+        accuracy: liveLocation.accuracy || null
+      };
+      locationSource = 'live_gps';
+      
+      // Also update the tourist's stored location with the latest coordinates
+      tourist.location = alertLocation;
+      tourist.lastSeen = Date.now();
+      await tourist.save();
+    }
+
     const newAlert = new Alert({
       tourist: tourist._id,
-      location: tourist.location,
+      location: alertLocation,
       type: 'Panic',
+      message: `Emergency SOS alert triggered by user (Location: ${locationSource})`,
+      severity: 'critical',
+      metadata: {
+        locationSource: locationSource,
+        timestamp: new Date(),
+        accuracy: alertLocation.accuracy || 'unknown'
+      }
     });
 
     await newAlert.save();
 
     // Here you would add logic to notify authorities, etc.
 
-    res.status(200).json({ message: 'Panic alert triggered successfully', alert: newAlert });
+    res.status(200).json({ 
+      message: 'Panic alert triggered successfully', 
+      alert: newAlert,
+      locationSource: locationSource 
+    });
   } catch (error) {
     res.status(500).json({ message: 'Error triggering panic alert', error: error.message });
   }

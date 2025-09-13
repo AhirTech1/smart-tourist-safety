@@ -156,15 +156,30 @@ class ApiService {
     }
   }
 
-  // Triggers a panic alert for a device
-  Future<Map<String, dynamic>> triggerPanic(String touristId) async {
+  // Triggers a panic alert for a device with optional live location
+  Future<Map<String, dynamic>> triggerPanic(String touristId, {double? latitude, double? longitude}) async {
     try {
+      Map<String, dynamic> body = {};
+      
+      // Include location if available
+      if (latitude != null && longitude != null) {
+        body['location'] = {
+          'latitude': latitude,
+          'longitude': longitude,
+          'timestamp': DateTime.now().toIso8601String(),
+        };
+        print('Sending panic alert with live location: $latitude, $longitude');
+      } else {
+        print('Sending panic alert without live location');
+      }
+      
       final response = await _client.post(
         Uri.parse('$_baseUrl/tourist/panic/$touristId'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
+        body: body.isNotEmpty ? jsonEncode(body) : null,
       ).timeout(_timeout);
       return _handleResponse(response);
     } catch (e) {
