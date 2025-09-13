@@ -198,15 +198,18 @@ class _ReportIncidentScreenState extends State<ReportIncidentScreen> {
   }
 
   void _showConfirmationDialog() {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: const Row(
+        title: Row(
           children: [
             Icon(Icons.check_circle, color: Colors.green, size: 28),
-            SizedBox(width: 12),
-            Text('Report Submitted'),
+            const SizedBox(width: 12),
+            const Text('Report Submitted'),
           ],
         ),
         content: Column(
@@ -215,18 +218,15 @@ class _ReportIncidentScreenState extends State<ReportIncidentScreen> {
           children: [
             Text(
               'Your incident has been reported successfully.',
-              style: TextStyle(
-                color: Theme.of(context).textTheme.bodyLarge?.color,
-                fontSize: 16,
-              ),
+              style: textTheme.bodyLarge,
             ),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.blue.shade50,
+                color: colorScheme.primaryContainer,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.blue.shade200),
+                border: Border.all(color: colorScheme.primary.withOpacity(0.3)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -235,22 +235,16 @@ class _ReportIncidentScreenState extends State<ReportIncidentScreen> {
                     'What happens next:',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Colors.blue.shade800,
+                      color: colorScheme.onPrimaryContainer,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    '• Local authorities have been notified',
-                    style: TextStyle(color: Colors.blue.shade700),
-                  ),
-                  Text(
-                    '• You will receive updates on your report',
-                    style: TextStyle(color: Colors.blue.shade700),
-                  ),
-                  Text(
-                    '• Emergency contacts may be informed if needed',
-                    style: TextStyle(color: Colors.blue.shade700),
-                  ),
+                  Text('• Local authorities have been notified',
+                      style: textTheme.bodyMedium?.copyWith(color: colorScheme.onPrimaryContainer.withOpacity(0.9))),
+                  Text('• You will receive updates on your report',
+                      style: textTheme.bodyMedium?.copyWith(color: colorScheme.onPrimaryContainer.withOpacity(0.9))),
+                  Text('• Emergency contacts may be informed if needed',
+                      style: textTheme.bodyMedium?.copyWith(color: colorScheme.onPrimaryContainer.withOpacity(0.9))),
                 ],
               ),
             ),
@@ -259,19 +253,19 @@ class _ReportIncidentScreenState extends State<ReportIncidentScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.red.shade50,
+                  color: colorScheme.errorContainer,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.red.shade200),
+                  border: Border.all(color: colorScheme.error.withOpacity(0.3)),
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.priority_high, color: Colors.red.shade700),
+                    Icon(Icons.priority_high, color: colorScheme.error),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         'High priority reports receive immediate attention from emergency services.',
                         style: TextStyle(
-                          color: Colors.red.shade800,
+                          color: colorScheme.onErrorContainer,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -314,6 +308,9 @@ class _ReportIncidentScreenState extends State<ReportIncidentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Report Incident'),
@@ -335,7 +332,7 @@ class _ReportIncidentScreenState extends State<ReportIncidentScreen> {
             Card(
               elevation: 2,
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -352,9 +349,11 @@ class _ReportIncidentScreenState extends State<ReportIncidentScreen> {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    const Text(
+                    Text(
                       'Help keep tourists safe by reporting incidents. Your report helps improve safety for everyone.',
-                      style: TextStyle(color: Colors.grey),
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: textTheme.bodyMedium?.color?.withOpacity(0.7),
+                      ),
                     ),
                   ],
                 ),
@@ -371,7 +370,7 @@ class _ReportIncidentScreenState extends State<ReportIncidentScreen> {
             const SizedBox(height: 8),
             Card(
               child: Padding(
-                padding: const EdgeInsets.all(8),
+                const EdgeInsets.all(8),
                 child: GridView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -419,8 +418,8 @@ class _ReportIncidentScreenState extends State<ReportIncidentScreen> {
                             ),
                           ],
                         ),
-                      ),
-                    );
+                      );
+                    },
                   },
                 ),
               ),
@@ -475,7 +474,7 @@ class _ReportIncidentScreenState extends State<ReportIncidentScreen> {
             const SizedBox(height: 8),
             Card(
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                const EdgeInsets.all(16),
                 child: TextFormField(
                   controller: _descriptionController,
                   maxLines: 4,
@@ -506,7 +505,7 @@ class _ReportIncidentScreenState extends State<ReportIncidentScreen> {
             const SizedBox(height: 8),
             Card(
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -544,9 +543,8 @@ class _ReportIncidentScreenState extends State<ReportIncidentScreen> {
                       const SizedBox(height: 8),
                       Text(
                         'Accuracy: ±${_currentPosition!.accuracy.toStringAsFixed(1)}m',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey.shade600,
+                        style: textTheme.bodySmall?.copyWith(
+                          color: textTheme.bodySmall?.color?.withOpacity(0.6),
                         ),
                       ),
                     ],
@@ -620,29 +618,33 @@ class _ReportIncidentScreenState extends State<ReportIncidentScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.red.shade50,
+                  color: colorScheme.errorContainer,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.red.shade200),
+                  border: Border.all(color: colorScheme.error.withOpacity(0.3)),
                 ),
-                child: const Column(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Icon(Icons.warning, color: Colors.red),
-                        SizedBox(width: 8),
-                        Text(
-                          'EMERGENCY SITUATION',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red,
+                    Icon(Icons.warning, color: colorScheme.error),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'EMERGENCY SITUATION',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: colorScheme.onErrorContainer,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      'If you are in immediate danger, please call local emergency services directly: 112 (EU), 911 (US), or your local emergency number.',
-                      style: TextStyle(color: Colors.red),
+                          const SizedBox(height: 8),
+                          Text(
+                            'If you are in immediate danger, please call local emergency services directly: 112 (EU), 911 (US), or your local emergency number.',
+                            style: TextStyle(color: colorScheme.onErrorContainer.withOpacity(0.9)),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),

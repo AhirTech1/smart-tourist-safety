@@ -17,18 +17,18 @@ const incidentRoutes = require('./routes/incidentRoutes');
 const app = express();
 
 // Middleware
-app.use(cors({
-  origin: [
-    'http://localhost:3000', 
-    'http://localhost:5173',
-    'https://smart-tourist-safety.vercel.app',
-    'https://smarttouristsafety.vercel.app'
-  ],
+const corsOptions = {
+  // Reflect request origin (temporarily allow all for dashboard/dev until final domain is fixed)
+  origin: true,
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  optionsSuccessStatus: 200
-}));
+  optionsSuccessStatus: 200,
+  maxAge: 86400 // cache preflight for 24h
+};
+app.use(cors(corsOptions));
+// Ensure preflight requests are handled correctly
+app.options('*', cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 

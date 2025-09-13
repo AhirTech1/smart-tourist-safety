@@ -7,18 +7,28 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 // Import routes
-const touristRoutes = require('./routes/touristRoutes');
-const dashboardRoutes = require('./routes/dashboardRoutes');
-const authRoutes = require('./routes/auth_routes');
-const aiRoutes = require('./routes/aiRoutes');
+const touristRoutes = require('./src/routes/touristRoutes');
+const dashboardRoutes = require('./src/routes/dashboardRoutes');
+const authRoutes = require('./src/routes/auth_routes');
+const aiRoutes = require('./src/routes/aiRoutes');
+const adminRoutes = require('./src/routes/adminRoutes');
+const incidentRoutes = require('./src/routes/incidentRoutes');
 
 const app = express();
 
 // Middleware
-app.use(cors({
-  origin: true, // Allow all origins
-  credentials: true
-}));
+const corsOptions = {
+  // Reflect request origin (temporarily allow all for dashboard/dev until final domain is fixed)
+  origin: true,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  optionsSuccessStatus: 200,
+  maxAge: 86400 // cache preflight for 24h
+};
+app.use(cors(corsOptions));
+// Ensure preflight requests are handled correctly
+app.options('*', cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
@@ -74,6 +84,8 @@ app.use('/api/tourist', touristRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/incidents', incidentRoutes);
 
 // Health check route
 app.get('/', (req, res) => {

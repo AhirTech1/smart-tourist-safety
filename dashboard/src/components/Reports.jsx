@@ -113,12 +113,12 @@ export default function Reports() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-8">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Incident Reports</h1>
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Incident Reports</h1>
             <p className="text-gray-600 mt-1">Manage and track safety incident reports</p>
           </div>
           <button
@@ -133,7 +133,7 @@ export default function Reports() {
 
         {/* Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
             <div className="flex items-center">
               <FileText className="text-blue-600" size={24} />
               <div className="ml-3">
@@ -143,7 +143,7 @@ export default function Reports() {
             </div>
           </div>
           
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
             <div className="flex items-center">
               <Clock className="text-orange-600" size={24} />
               <div className="ml-3">
@@ -153,7 +153,7 @@ export default function Reports() {
             </div>
           </div>
 
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
             <div className="flex items-center">
               <CheckCircle className="text-green-600" size={24} />
               <div className="ml-3">
@@ -163,7 +163,7 @@ export default function Reports() {
             </div>
           </div>
 
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
             <div className="flex items-center">
               <AlertCircle className="text-red-600" size={24} />
               <div className="ml-3">
@@ -176,7 +176,7 @@ export default function Reports() {
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4 mb-6">
+      <div className="bg-white rounded-lg shadow-md p-4 mb-6">
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Search */}
           <div className="flex-1">
@@ -187,7 +187,7 @@ export default function Reports() {
                 placeholder="Search incidents by description or type..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full pl-10 pr-4 py-2 text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
           </div>
@@ -195,7 +195,7 @@ export default function Reports() {
           {/* Filter Toggle */}
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+            className="flex items-center text-gray-600 gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
           >
             <Filter size={16} />
             Filters
@@ -213,7 +213,7 @@ export default function Reports() {
                 <select
                   value={filters.status}
                   onChange={(e) => handleFilterChange('status', e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">All Statuses</option>
                   {STATUS_OPTIONS.map(status => (
@@ -230,7 +230,7 @@ export default function Reports() {
                 <select
                   value={filters.priority}
                   onChange={(e) => handleFilterChange('priority', e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">All Priorities</option>
                   {PRIORITY_LEVELS.map(priority => (
@@ -247,7 +247,7 @@ export default function Reports() {
                 <select
                   value={filters.type}
                   onChange={(e) => handleFilterChange('type', e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">All Types</option>
                   {INCIDENT_TYPES.map(type => (
@@ -262,7 +262,7 @@ export default function Reports() {
               <div className="flex items-end">
                 <button
                   onClick={resetFilters}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
                   Reset Filters
                 </button>
@@ -283,7 +283,7 @@ export default function Reports() {
       )}
 
       {/* Incidents List */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-lg shadow-lg">
         {loading ? (
           <div className="p-8 text-center">
             <RefreshCw className="animate-spin mx-auto mb-4 text-gray-400" size={32} />
@@ -364,7 +364,7 @@ export default function Reports() {
                         value={incident.status}
                         onChange={(e) => handleStatusUpdate(incident._id, e.target.value)}
                         disabled={statusUpdateLoading === incident._id}
-                        className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500"
+                        className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1.5 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       >
                         {STATUS_OPTIONS.map(status => (
                           <option key={status.value} value={status.value}>
