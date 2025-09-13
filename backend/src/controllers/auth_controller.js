@@ -55,8 +55,13 @@ exports.register = async (req, res) => {
         id: tourist._id,
         name: tourist.name,
         email: tourist.email,
+        phoneNumber: tourist.phoneNumber,
         digitalId: tourist.digitalId,
         idValidUntil: tourist.idValidUntil,
+        kycStatus: tourist.kycStatus,
+        emergencyContacts: tourist.emergencyContacts,
+        tripDuration: tourist.tripDuration,
+        tripItinerary: tourist.tripItinerary,
       },
     });
   } catch (error) {
@@ -94,9 +99,13 @@ exports.login = async (req, res) => {
         id: tourist._id,
         name: tourist.name,
         email: tourist.email,
+        phoneNumber: tourist.phoneNumber,
         digitalId: tourist.digitalId,
         idValidUntil: tourist.idValidUntil,
         kycStatus: tourist.kycStatus,
+        emergencyContacts: tourist.emergencyContacts,
+        tripDuration: tourist.tripDuration,
+        tripItinerary: tourist.tripItinerary,
       },
     });
   } catch (error) {

@@ -473,7 +473,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AlertsScreen()));
           } : null),
           _buildDashboardCard('Emergency Contacts', Icons.contact_phone, Colors.green, isKycValid ? () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ContactsScreen()));
+            Navigator.of(context).push(MaterialPageRoute(builder: (_) => ContactsScreen(tourist: widget.tourist)));
           } : null),
           _buildDashboardCard('Report Incident', Icons.report_problem, Colors.purple, isKycValid ? () {
             Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReportIncidentScreen()));

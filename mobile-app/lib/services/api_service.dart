@@ -282,6 +282,26 @@ class ApiService {
     }
   }
   
+  // Get tourist profile data
+  Future<Map<String, dynamic>> getTouristProfile(String touristId) async {
+    try {
+      final response = await _client.get(
+        Uri.parse('$_baseUrl/tourist/profile/$touristId'),
+        headers: {
+          'Accept': 'application/json',
+          'User-Agent': 'SmartTouristApp/1.0',
+        },
+      ).timeout(_timeout);
+      return _handleResponse(response);
+    } catch (e) {
+      print('Network Error on getTouristProfile: $e');
+      if (e.toString().contains('TimeoutException')) {
+        return {'error': true, 'message': 'Profile fetch timeout. Please try again.'};
+      }
+      return {'error': true, 'message': 'Could not fetch profile data.'};
+    }
+  }
+
   // Cleanup method
   static void dispose() {
     _client.close();
