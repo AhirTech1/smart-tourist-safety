@@ -332,7 +332,7 @@ class _ReportIncidentScreenState extends State<ReportIncidentScreen> {
             Card(
               elevation: 2,
               child: Padding(
-                const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -370,7 +370,7 @@ class _ReportIncidentScreenState extends State<ReportIncidentScreen> {
             const SizedBox(height: 8),
             Card(
               child: Padding(
-                const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 child: GridView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -418,8 +418,8 @@ class _ReportIncidentScreenState extends State<ReportIncidentScreen> {
                             ),
                           ],
                         ),
-                      );
-                    },
+                      ),
+                    );
                   },
                 ),
               ),
@@ -474,7 +474,7 @@ class _ReportIncidentScreenState extends State<ReportIncidentScreen> {
             const SizedBox(height: 8),
             Card(
               child: Padding(
-                const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 child: TextFormField(
                   controller: _descriptionController,
                   maxLines: 4,
@@ -505,7 +505,7 @@ class _ReportIncidentScreenState extends State<ReportIncidentScreen> {
             const SizedBox(height: 8),
             Card(
               child: Padding(
-                const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

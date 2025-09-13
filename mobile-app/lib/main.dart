@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:smart_tourist_safety_app/screens/login_screen.dart';
+import 'package:smart_tourist_safety_app/screens/splash_screen.dart';
 import 'package:smart_tourist_safety_app/theme/theme_notifier.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -43,7 +43,7 @@ class AuthWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Here you can add logic to check if the user is already logged in
-    // For now, we'll always show the login screen.
-    return const LoginScreen();
+    // For now, we'll show the splash screen which will navigate to login.
+    return const SplashScreen();
   }
 }
