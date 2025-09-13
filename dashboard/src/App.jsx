@@ -15,7 +15,11 @@ const ProtectedRoute = ({ children }) => {
     return <LoadingSpinner />;
   }
   
-  return isAuthenticated ? children : <Navigate to="/login" replace />;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return children;
 };
 
 // Public Route Component (redirects to dashboard if already authenticated)
@@ -26,7 +30,11 @@ const PublicRoute = ({ children }) => {
     return <LoadingSpinner />;
   }
   
-  return !isAuthenticated ? children : <Navigate to="/dashboard" replace />;
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  
+  return children;
 };
 
 // Main App Routes Component

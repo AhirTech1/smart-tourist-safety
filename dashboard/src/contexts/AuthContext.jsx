@@ -16,45 +16,72 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // Debug logging
+  console.log('AuthProvider render:', { isLoading, isAuthenticated, hasUser: !!user });
+
   // Initialize auth state from localStorage
   useEffect(() => {
+    let isMounted = true;
+    
     const initAuth = async () => {
       try {
         const storedToken = localStorage.getItem('authToken');
         const storedUser = localStorage.getItem('authUser');
 
-        if (storedToken && storedUser) {
+        if (storedToken && storedUser && isMounted) {
           const parsedUser = JSON.parse(storedUser);
           
-          // Verify token is still valid by calling profile endpoint
-          const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://sih-2025-471306.el.r.appspot.com/api'}/admin/profile`, {
-            headers: {
-              'Authorization': `Bearer ${storedToken}`,
-              'Content-Type': 'application/json'
-            }
-          });
+          // First set the user from localStorage to avoid flash
+          setUser(parsedUser);
+          setToken(storedToken);
+          setIsAuthenticated(true);
+          
+          // Then verify token is still valid by calling profile endpoint
+          try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://sih-2025-471306.el.r.appspot.com/api'}/admin/profile`, {
+              headers: {
+                'Authorization': `Bearer ${storedToken}`,
+                'Content-Type': 'application/json'
+              }
+            });
 
-          if (response.ok) {
-            const data = await response.json();
-            setUser(data.user);
-            setToken(storedToken);
-            setIsAuthenticated(true);
-          } else {
-            // Token is invalid, clear storage
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('authUser');
+            if (!response.ok && isMounted) {
+              // Token is invalid, clear storage
+              localStorage.removeItem('authToken');
+              localStorage.removeItem('authUser');
+              setUser(null);
+              setToken(null);
+              setIsAuthenticated(false);
+            } else if (response.ok && isMounted) {
+              const data = await response.json();
+              setUser(data.user);
+            }
+          } catch (verifyError) {
+            console.error('Token verification error:', verifyError);
+            // Keep the user logged in if verification fails due to network issues
           }
         }
       } catch (error) {
         console.error('Auth initialization error:', error);
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('authUser');
+        if (isMounted) {
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('authUser');
+          setUser(null);
+          setToken(null);
+          setIsAuthenticated(false);
+        }
       } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
 
     initAuth();
+    
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const login = async (email, password) => {

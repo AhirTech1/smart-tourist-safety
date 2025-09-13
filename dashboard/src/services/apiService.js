@@ -4,11 +4,18 @@ const API_URL = import.meta.env.VITE_API_URL || 'https://sih-2025-471306.el.r.ap
 
 // Helper function to get auth headers
 const getAuthHeaders = () => {
-  const token = localStorage.getItem('authToken');
-  return {
-    'Content-Type': 'application/json',
-    ...(token && { 'Authorization': `Bearer ${token}` })
-  };
+  try {
+    const token = localStorage.getItem('authToken');
+    return {
+      'Content-Type': 'application/json',
+      ...(token && { 'Authorization': `Bearer ${token}` })
+    };
+  } catch (error) {
+    console.error('Error accessing localStorage:', error);
+    return {
+      'Content-Type': 'application/json'
+    };
+  }
 };
 
 // Helper function for API calls with error handling
@@ -22,10 +29,10 @@ const apiCall = async (url, options = {}) => {
   });
 
   if (response.status === 401) {
-    // Token expired or invalid, redirect to login
+    // Token expired or invalid, clear auth data but don't redirect
+    // Let the AuthContext handle the redirect
     localStorage.removeItem('authToken');
     localStorage.removeItem('authUser');
-    window.location.href = '/login';
     throw new Error('Authentication required');
   }
 

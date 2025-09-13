@@ -21,31 +21,54 @@ export default function DashboardView({ onLogout }) {
   const currentView = currentPath.substring(1) || 'home';
 
   useEffect(() => {
+    let isMounted = true;
+    let intervalId;
+
     const fetchData = async (isInitialLoad = false) => {
+      if (!isMounted) return;
+      
       if (isInitialLoad) {
         setIsLoading(true);
       }
       setError(null);
+      
       try {
         const [touristsData, alertsData] = await Promise.all([
           apiService.getTourists(),
           apiService.getAlerts()
         ]);
-        setTourists(touristsData || []);
-        setAlerts(alertsData || []);
+        
+        if (isMounted) {
+          setTourists(touristsData || []);
+          setAlerts(alertsData || []);
+        }
       } catch (err) {
         console.error("Failed to fetch data:", err);
-        setError("Could not connect to the backend. Make sure it's running and accessible.");
+        if (isMounted) {
+          setError("Could not connect to the backend. Make sure it's running and accessible.");
+        }
       } finally {
-        if (isInitialLoad) {
+        if (isInitialLoad && isMounted) {
           setIsLoading(false);
         }
       }
     };
 
     fetchData(true); // Initial fetch
-    const intervalId = setInterval(fetchData, 10000); // Subsequent fetches
-    return () => clearInterval(intervalId);
+    
+    // Set up interval only after initial fetch
+    intervalId = setInterval(() => {
+      if (isMounted) {
+        fetchData(false);
+      }
+    }, 30000); // Increased interval to 30 seconds to reduce server load
+    
+    return () => {
+      isMounted = false;
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
   }, []);
 
   const handleNavigation = (view) => {
