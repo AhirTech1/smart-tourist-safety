@@ -71,6 +71,23 @@ const apiService = {
   }),
 
   listAdmins: () => apiCall(`${API_URL}/admin/list`),
+
+  // Alert management
+  updateAlertStatus: (alertId, status, notes = '') => apiCall(`${API_URL}/dashboard/alerts/${alertId}/status`, {
+    method: 'PUT',
+    body: JSON.stringify({ status, notes })
+  }),
+
+  dispatchEmergencyServices: (alertId, serviceType, priority = 'high', dispatchNotes = '') => 
+    apiCall(`${API_URL}/dashboard/alerts/${alertId}/dispatch`, {
+      method: 'POST',
+      body: JSON.stringify({ serviceType, priority, dispatchNotes })
+    }),
+
+  updateAlertNotes: (alertId, notes) => apiCall(`${API_URL}/dashboard/alerts/${alertId}/notes`, {
+    method: 'PUT',
+    body: JSON.stringify({ notes })
+  }),
 };
 
 export default apiService;

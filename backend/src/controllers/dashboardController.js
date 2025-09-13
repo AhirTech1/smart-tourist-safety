@@ -81,3 +81,112 @@ exports.getHighRiskZones = async (req, res) => {
     res.status(500).json({ message: 'Error fetching high-risk zones', error: error.message });
   }
 };
+
+// Update alert status (resolve, acknowledge, false alarm, etc.)
+exports.updateAlertStatus = async (req, res) => {
+  try {
+    const { alertId } = req.params;
+    const { status, notes } = req.body;
+    const resolvedBy = req.user.id; // From JWT token
+
+    const alertService = require('../services/alertService');
+    const updatedAlert = await alertService.updateAlertStatus(alertId, status, resolvedBy, notes);
+
+    if (!updatedAlert) {
+      return res.status(404).json({ message: 'Alert not found' });
+    }
+
+    res.status(200).json({ 
+      message: 'Alert status updated successfully', 
+      alert: updatedAlert 
+    });
+  } catch (error) {
+    console.error('Error updating alert status:', error);
+    res.status(500).json({ message: 'Error updating alert status', error: error.message });
+  }
+};
+
+// Dispatch emergency services for an alert
+exports.dispatchEmergencyServices = async (req, res) => {
+  try {
+    const { alertId } = req.params;
+    const { serviceType, priority, dispatchNotes } = req.body;
+    const dispatchedBy = req.user.id;
+
+    // Find the alert
+    const alert = await Alert.findById(alertId).populate('tourist');
+    if (!alert) {
+      return res.status(404).json({ message: 'Alert not found' });
+    }
+
+    // Create dispatch record
+    const dispatchRecord = {
+      serviceType: serviceType || 'police', // police, ambulance, fire, tourist_helpline
+      priority: priority || 'high',
+      dispatchedBy: dispatchedBy,
+      dispatchedAt: new Date(),
+      notes: dispatchNotes || `Emergency services dispatched for ${alert.type} alert`,
+      location: alert.location,
+      touristInfo: {
+        name: alert.tourist.name,
+        phone: alert.tourist.phoneNumber
+      }
+    };
+
+    // Add dispatch record to alert
+    if (!alert.emergencyDispatches) {
+      alert.emergencyDispatches = [];
+    }
+    alert.emergencyDispatches.push(dispatchRecord);
+
+    // Update alert status to acknowledged
+    if (alert.status === 'Active') {
+      alert.status = 'Acknowledged';
+    }
+
+    await alert.save();
+
+    // Log the dispatch action
+    console.log(`Emergency services (${serviceType}) dispatched for alert ${alertId} by user ${dispatchedBy}`);
+
+    res.status(200).json({ 
+      message: 'Emergency services dispatched successfully',
+      alert: alert,
+      dispatch: dispatchRecord
+    });
+  } catch (error) {
+    console.error('Error dispatching emergency services:', error);
+    res.status(500).json({ message: 'Error dispatching emergency services', error: error.message });
+  }
+};
+
+// Update alert notes
+exports.updateAlertNotes = async (req, res) => {
+  try {
+    const { alertId } = req.params;
+    const { notes } = req.body;
+    const updatedBy = req.user.id;
+
+    const alert = await Alert.findByIdAndUpdate(
+      alertId,
+      { 
+        notes: notes,
+        notesUpdatedBy: updatedBy,
+        notesUpdatedAt: new Date()
+      },
+      { new: true }
+    ).populate('tourist');
+
+    if (!alert) {
+      return res.status(404).json({ message: 'Alert not found' });
+    }
+
+    res.status(200).json({ 
+      message: 'Alert notes updated successfully', 
+      alert: alert 
+    });
+  } catch (error) {
+    console.error('Error updating alert notes:', error);
+    res.status(500).json({ message: 'Error updating alert notes', error: error.message });
+  }
+};

@@ -88,6 +88,42 @@ const alertSchema = new mongoose.Schema({
     ref: 'User',
   },
   notes: String,
+  notesUpdatedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  notesUpdatedAt: Date,
+  emergencyDispatches: [{
+    serviceType: {
+      type: String,
+      enum: ['police', 'ambulance', 'fire', 'tourist_helpline'],
+      required: true
+    },
+    priority: {
+      type: String,
+      enum: ['low', 'medium', 'high', 'critical'],
+      default: 'high'
+    },
+    dispatchedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
+    dispatchedAt: {
+      type: Date,
+      default: Date.now
+    },
+    notes: String,
+    location: {
+      latitude: Number,
+      longitude: Number,
+      address: String
+    },
+    touristInfo: {
+      name: String,
+      phone: String
+    }
+  }],
 });
 
 // Create indexes for efficient querying
