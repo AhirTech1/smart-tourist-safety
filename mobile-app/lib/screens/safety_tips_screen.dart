@@ -29,7 +29,7 @@ class SafetyTipsScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        'Important Safety Information',
+                        'Important Safety',
                         style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),

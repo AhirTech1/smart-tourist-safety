@@ -10,6 +10,7 @@ import 'maps_screen.dart';
 import 'profile_screen.dart';
 import 'report_incident_screen.dart';
 import 'safety_tips_screen.dart';
+import 'sos_confirmation_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final Map<String, dynamic> tourist;
@@ -78,7 +79,33 @@ class _HomeScreenState extends State<HomeScreen> {
     debugPrint("Location sent: $lat, $lng → $response");
   }
 
-  Future<void> _triggerPanic() async {
+  void _triggerPanic() {
+    // Show SOS confirmation screen with 5-second countdown
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => SOSConfirmationScreen(
+          onConfirm: () {
+            Navigator.of(context).pop(); // Close confirmation screen
+            _executePanicAlert(); // Execute the actual SOS alert
+          },
+          onCancel: () {
+            Navigator.of(context).pop(); // Just close the confirmation screen
+          },
+        ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          // Slide up animation for dramatic effect
+          const begin = Offset(0.0, 1.0);
+          const end = Offset.zero;
+          const curve = Curves.easeInOut;
+          var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          return SlideTransition(position: animation.drive(tween), child: child);
+        },
+        transitionDuration: const Duration(milliseconds: 300),
+      ),
+    );
+  }
+
+  Future<void> _executePanicAlert() async {
     final id = widget.tourist['id'];
     if (id == null) return;
     
@@ -113,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     
     final response = await _apiService.triggerPanic(id, latitude: latitude, longitude: longitude);
-    if (mounted) _showApiResponse('Panic Alert', response);
+    if (mounted) _showApiResponse('Emergency SOS Alert Sent', response);
   }
 
   Future<void> _startLiveLocation() async {
@@ -281,27 +308,38 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildSosButton() {
-    return Container(
-      height: 180,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.red.withOpacity(0.1),
-        boxShadow: [
-          BoxShadow(color: Colors.red.withOpacity(0.2), spreadRadius: 8, blurRadius: 24),
-        ],
-      ),
-      child: Center(
-        child: ElevatedButton(
-          onPressed: _triggerPanic,
-          style: ElevatedButton.styleFrom(
-            shape: const CircleBorder(),
-            padding: const EdgeInsets.all(60),
-            backgroundColor: Theme.of(context).colorScheme.error,
-            foregroundColor: Theme.of(context).colorScheme.onError,
+    return Column(
+      children: [
+        Container(
+          height: 180,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.red.withOpacity(0.1),
+            boxShadow: [
+              BoxShadow(color: Colors.red.withOpacity(0.2), spreadRadius: 8, blurRadius: 24),
+            ],
           ),
-          child: const Text('SOS', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, letterSpacing: 2)),
+          child: Center(
+            child: ElevatedButton(
+              onPressed: _triggerPanic,
+              style: ElevatedButton.styleFrom(
+                shape: const CircleBorder(),
+                padding: const EdgeInsets.all(60),
+                backgroundColor: Theme.of(context).colorScheme.error,
+                foregroundColor: Theme.of(context).colorScheme.onError,
+                elevation: 8,
+              ),
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('SOS', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, letterSpacing: 2)),
+                  SizedBox(height: 4),
+                ],
+              ),
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 

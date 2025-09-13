@@ -66,7 +66,7 @@ export default function Alerts({ alerts, isLoading }) {
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Alerts History</h1>
+      <h1 className="text-3xl font-bold text-white-800 mb-6">Alerts History</h1>
       <div className="bg-white rounded-lg shadow-lg">
         {alerts.length === 0 ? (
           <div className="p-8 text-center text-gray-500">
@@ -110,7 +110,7 @@ export default function Alerts({ alerts, isLoading }) {
                       <div className="space-y-2">
                         <div className="text-sm">
                           <span className="font-medium text-gray-700">Location:</span>
-                          <div className="mt-1">
+                          <div className="mt-1 text-gray-600">
                             {getLocationDisplay(alert)}
                           </div>
                         </div>
