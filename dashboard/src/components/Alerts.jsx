@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { MapPin, Clock, User, AlertTriangle, Navigation, Wifi, WifiOff, ChevronDown, ChevronRight, 
-         CheckCircle, Phone, Ambulance, Shield, MessageSquare, X, Save, Truck } from 'lucide-react';
+         CheckCircle, Phone, Ambulance, Shield, MessageSquare, X, Save, Truck, ExternalLink } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import apiService from '../services/apiService';
 import { useNotification } from './Notification';
 
@@ -20,7 +21,7 @@ const getSeverityColor = (severity) => {
   }
 };
 
-const getLocationDisplay = (alert) => {
+const getLocationDisplay = (alert, onLocationClick) => {
   const location = alert.location;
   const metadata = alert.metadata;
   
@@ -44,9 +45,14 @@ const getLocationDisplay = (alert) => {
         ) : (
           <MapPin className="w-4 h-4 mr-1 text-blue-600" />
         )}
-        <span className="font-medium">
+        <button
+          onClick={() => onLocationClick(alert)}
+          className="font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer transition-colors duration-200 flex items-center group"
+          title="Click to view on map"
+        >
           {latitude?.toFixed(6)}, {longitude?.toFixed(6)}
-        </span>
+          <ExternalLink className="w-3 h-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+        </button>
         <span className={`ml-2 px-2 py-1 rounded-full text-xs ${
           locationSource === 'live_gps' 
             ? 'bg-green-100 text-green-800' 
@@ -188,7 +194,7 @@ const AlertActions = ({ alert, onStatusUpdate, onDispatch, onNotesUpdate }) => {
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Add notes about this alert..."
-            className="w-full p-3 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full p-3 text-gray-700 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             rows={3}
           />
           <div className="flex gap-2">
@@ -239,8 +245,9 @@ const AlertActions = ({ alert, onStatusUpdate, onDispatch, onNotesUpdate }) => {
 export default function Alerts({ alerts: initialAlerts, isLoading }) {
   const [alerts, setAlerts] = useState(initialAlerts || []);
   const [expandedAlert, setExpandedAlert] = useState(null);
-  const [filter, setFilter] = useState('all'); // all, active, resolved
+  const [filter, setFilter] = useState('active'); // all, active, resolved - default to active
   const { showNotification, NotificationContainer } = useNotification();
+  const navigate = useNavigate();
 
   // Update local state when props change
   React.useEffect(() => {
@@ -305,6 +312,26 @@ export default function Alerts({ alerts: initialAlerts, isLoading }) {
     }
   };
 
+  const handleLocationClick = (alert) => {
+    // Navigate to map with alert location
+    const { latitude, longitude } = alert.location;
+    if (latitude && longitude) {
+      // Store the alert location in session storage for the map to use
+      sessionStorage.setItem('focusAlert', JSON.stringify({
+        id: alert._id,
+        latitude: latitude,
+        longitude: longitude,
+        type: alert.type,
+        severity: alert.severity,
+        timestamp: alert.timestamp,
+        touristName: alert.tourist?.name
+      }));
+      
+      navigate('/dashboard/map');
+      showNotification('Opening location on map...', 'info');
+    }
+  };
+
   const filteredAlerts = alerts.filter(alert => {
     switch (filter) {
       case 'active':
@@ -322,7 +349,7 @@ export default function Alerts({ alerts: initialAlerts, isLoading }) {
     <div className="p-8">
       <NotificationContainer />
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-white-800 mb-6">Alert Management Center</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">Alert Management Center</h1>
         
         {/* Filter Buttons */}
         <div className="flex space-x-2">
@@ -420,7 +447,7 @@ export default function Alerts({ alerts: initialAlerts, isLoading }) {
                             <div className="text-sm">
                               <span className="font-medium text-gray-700">Location:</span>
                               <div className="mt-1 text-gray-600">
-                                {getLocationDisplay(alert)}
+                                {getLocationDisplay(alert, handleLocationClick)}
                               </div>
                             </div>
                           </div>

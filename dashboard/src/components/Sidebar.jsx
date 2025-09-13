@@ -1,9 +1,16 @@
 import React from 'react';
 import { Shield, Map, AlertTriangle, BarChart2, Users, LogOut, Settings, UserCheck, Crown } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useAlert } from '../contexts/AlertContext';
 
 export default function Sidebar({ currentView, setCurrentView, onLogout }) {
   const { user, hasPermission, hasRole } = useAuth();
+  const { activeAlerts } = useAlert();
+
+  // Count only active and acknowledged alerts (not resolved or false alarms)
+  const activeAlertCount = activeAlerts.filter(alert => 
+    alert.status === 'Active' || alert.status === 'Acknowledged'
+  ).length;
 
   // Define navigation items with permission requirements
   const navItems = [
@@ -128,14 +135,21 @@ export default function Sidebar({ currentView, setCurrentView, onLogout }) {
           <button
             key={item.name}
             onClick={() => setCurrentView(item.view)}
-            className={`w-full flex items-center px-4 py-3 my-1 rounded-lg transition-colors text-left ${
+            className={`w-full flex items-center justify-between px-4 py-3 my-1 rounded-lg transition-colors text-left ${
               currentView === item.view
                 ? 'bg-blue-600 text-white'
                 : 'text-gray-300 hover:bg-gray-700 hover:text-white'
             }`}
           >
-            {item.icon}
-            <span className="ml-4">{item.name}</span>
+            <div className="flex items-center">
+              {item.icon}
+              <span className="ml-4">{item.name}</span>
+            </div>
+            {item.view === 'alerts' && activeAlertCount > 0 && (
+              <div className="bg-red-500 text-white text-xs rounded-full px-2 py-1 min-w-[20px] h-5 flex items-center justify-center">
+                {activeAlertCount}
+              </div>
+            )}
           </button>
         ))}
       </nav>
