@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:smart_tourist_safety_app/screens/kyc_prompt_screen.dart';
@@ -72,6 +73,118 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _showSOSConfirmation(Map<String, dynamic> response) {
+    if (!mounted) return;
+    
+    bool isSuccess = !response.containsKey('error');
+    
+    // Haptic feedback for SOS result
+    if (isSuccess) {
+      HapticFeedback.heavyImpact(); // Success vibration
+    } else {
+      HapticFeedback.mediumImpact(); // Error vibration  
+    }
+    
+    // Show a clean snackbar instead of dialog for SOS confirmation
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(
+              isSuccess ? Icons.check_circle : Icons.error,
+              color: Colors.white,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                isSuccess 
+                  ? '🚨 Emergency alert sent successfully!'
+                  : 'Failed to send emergency alert. Please try again.',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: isSuccess ? Colors.green.shade600 : Colors.red.shade600,
+        duration: const Duration(seconds: 4),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        margin: const EdgeInsets.all(16),
+      ),
+    );
+    
+    // If successful, also show a brief success overlay
+    if (isSuccess) {
+      _showSOSSuccessOverlay();
+    }
+  }
+
+  void _showSOSSuccessOverlay() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        // Auto-dismiss after 2 seconds
+        Future.delayed(const Duration(seconds: 2), () {
+          if (mounted && Navigator.of(context).canPop()) {
+            Navigator.of(context).pop();
+          }
+        });
+        
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.green.shade600,
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.check_circle_outline,
+                  color: Colors.white,
+                  size: 60,
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'SOS Alert Sent!',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Emergency services have been notified',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> _sendLocation(double lat, double lng) async {
     final id = widget.tourist['id'];
     if (id == null) return;
@@ -140,7 +253,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     
     final response = await _apiService.triggerPanic(id, latitude: latitude, longitude: longitude);
-    if (mounted) _showApiResponse('Emergency SOS Alert Sent', response);
+    if (mounted) _showSOSConfirmation(response);
   }
 
   Future<void> _startLiveLocation() async {
