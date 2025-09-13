@@ -88,6 +88,37 @@ const apiService = {
     method: 'PUT',
     body: JSON.stringify({ notes })
   }),
+
+  // Incident Reports Management
+  getIncidents: (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return apiCall(`${API_URL}/incidents${query ? `?${query}` : ''}`);
+  },
+
+  getIncidentById: (incidentId) => apiCall(`${API_URL}/incidents/${incidentId}`),
+
+  updateIncidentStatus: (incidentId, status, note = '') => apiCall(`${API_URL}/incidents/${incidentId}/status`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status, note })
+  }),
+
+  assignIncident: (incidentId, assignedTo) => apiCall(`${API_URL}/incidents/${incidentId}/assign`, {
+    method: 'PATCH',
+    body: JSON.stringify({ assignedTo })
+  }),
+
+  getIncidentStats: () => apiCall(`${API_URL}/incidents/stats`),
+
+  // Get pending incidents count for notification badge
+  getPendingIncidentsCount: async () => {
+    try {
+      const response = await apiCall(`${API_URL}/incidents?status=reported&status=investigating`);
+      return response.incidents ? response.incidents.length : 0;
+    } catch (error) {
+      console.error('Failed to get pending incidents count:', error);
+      return 0;
+    }
+  },
 };
 
 export default apiService;

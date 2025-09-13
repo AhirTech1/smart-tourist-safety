@@ -349,7 +349,7 @@ export default function Alerts({ alerts: initialAlerts, isLoading }) {
     <div className="p-8">
       <NotificationContainer />
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">Alert Management Center</h1>
+        <h1 className="text-3xl font-bold text-white-800 mb-6">Alert Management Center</h1>
         
         {/* Filter Buttons */}
         <div className="flex space-x-2">

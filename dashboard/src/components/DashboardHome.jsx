@@ -75,16 +75,6 @@ export default function DashboardHome({ tourists, alerts, isLoading }) {
     <div className="p-6 md:p-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Dashboard Overview</h1>
-        
-        {/* Test Alert Button - For Development/Demo */}
-        <button
-          onClick={createTestAlert}
-          className="flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm"
-          title="Create a test SOS alert to demo the notification system"
-        >
-          <TestTube className="w-4 h-4 mr-2" />
-          Test Alert System
-        </button>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatCard title="Total Tourists" value={tourists.length} icon={<Users className="text-white" />} color="bg-blue-500" />

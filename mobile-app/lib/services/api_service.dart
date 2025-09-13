@@ -302,6 +302,162 @@ class ApiService {
     }
   }
 
+  // Report incident method
+  Future<Map<String, dynamic>> reportIncident({
+    required String type,
+    required String description,
+    required String priority,
+    Map<String, dynamic>? location,
+    bool isAnonymous = false,
+    String? touristId,
+    List<String>? mediaUrls,
+  }) async {
+    try {
+      final fullUrl = '$_baseUrl/incidents/report';
+      print('Reporting incident to: $fullUrl');
+      
+      final requestBody = {
+        'type': type,
+        'description': description,
+        'priority': priority,
+        'isAnonymous': isAnonymous,
+        'timestamp': DateTime.now().toIso8601String(),
+        'status': 'reported',
+      };
+
+      // Add location if available
+      if (location != null) {
+        requestBody['location'] = location;
+      }
+
+      // Add tourist ID if not anonymous and available
+      if (!isAnonymous && touristId != null && touristId.isNotEmpty) {
+        requestBody['reportedBy'] = touristId;
+      }
+
+      // Add media URLs if available
+      if (mediaUrls != null && mediaUrls.isNotEmpty) {
+        requestBody['mediaUrls'] = mediaUrls;
+      }
+
+      final response = await _client.post(
+        Uri.parse(fullUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'User-Agent': 'SmartTouristApp/1.0',
+        },
+        body: jsonEncode(requestBody),
+      ).timeout(_timeout);
+
+      print('Incident report response status: ${response.statusCode}');
+      return _handleResponse(response);
+    } on SocketException catch (e) {
+      print('Network Error (SocketException): $e');
+      return {'error': true, 'message': 'No internet connection. Please check your network.'};
+    } on HttpException catch (e) {
+      print('HTTP Error: $e');
+      return {'error': true, 'message': 'Server connection failed. Please try again.'};
+    } on FormatException catch (e) {
+      print('Format Error: $e');
+      return {'error': true, 'message': 'Invalid server response format.'};
+    } catch (e) {
+      print('Unexpected Error on incident report: $e');
+      return {'error': true, 'message': 'Could not submit incident report. Please try again later.'};
+    }
+  }
+
+  // Get incident reports (for tracking purposes)
+  Future<List<dynamic>> getIncidentReports({String? touristId, String? status}) async {
+    try {
+      String url = '$_baseUrl/incidents';
+      
+      // Build query parameters
+      List<String> queryParams = [];
+      if (touristId != null && touristId.isNotEmpty) {
+        queryParams.add('reportedBy=$touristId');
+      }
+      if (status != null && status.isNotEmpty) {
+        queryParams.add('status=$status');
+      }
+      
+      if (queryParams.isNotEmpty) {
+        url += '?${queryParams.join('&')}';
+      }
+
+      final response = await _client.get(
+        Uri.parse(url),
+        headers: {
+          'Accept': 'application/json',
+          'User-Agent': 'SmartTouristApp/1.0',
+        },
+      ).timeout(_timeout);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data is List ? data : [];
+      }
+      return [];
+    } catch (e) {
+      print('Network Error on getIncidentReports: $e');
+      return [];
+    }
+  }
+
+  // Trigger SOS/Panic alert with enhanced data
+  Future<Map<String, dynamic>> triggerSOS({
+    required String touristId,
+    Map<String, dynamic>? location,
+    String? message,
+    List<String>? emergencyContacts,
+  }) async {
+    try {
+      final fullUrl = '$_baseUrl/tourist/panic/$touristId';
+      print('Triggering SOS to: $fullUrl');
+
+      final requestBody = <String, dynamic>{
+        'timestamp': DateTime.now().toIso8601String(),
+      };
+
+      // Add location if available
+      if (location != null) {
+        requestBody['location'] = location;
+      }
+
+      // Add custom message if provided
+      if (message != null && message.isNotEmpty) {
+        requestBody['message'] = message;
+      }
+
+      // Add emergency contacts if provided
+      if (emergencyContacts != null && emergencyContacts.isNotEmpty) {
+        requestBody['emergencyContacts'] = emergencyContacts;
+      }
+
+      final response = await _client.post(
+        Uri.parse(fullUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'User-Agent': 'SmartTouristApp/1.0',
+        },
+        body: jsonEncode(requestBody),
+      ).timeout(_timeout);
+
+      print('SOS response status: ${response.statusCode}');
+      return _handleResponse(response);
+    } on SocketException catch (e) {
+      print('Network Error (SocketException): $e');
+      return {'error': true, 'message': 'No internet connection. Please check your network.'};
+    } on HttpException catch (e) {
+      print('HTTP Error: $e');
+      return {'error': true, 'message': 'Server connection failed. Please try again.'};
+    } catch (e) {
+      print('Unexpected Error on SOS trigger: $e');
+      return {'error': true, 'message': 'Could not send SOS alert. Please try again or call emergency services directly.'};
+    }
+  }
+
   // Cleanup method
   static void dispose() {
     _client.close();

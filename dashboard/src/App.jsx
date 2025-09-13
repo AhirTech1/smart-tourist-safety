@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { AlertProvider } from './contexts/AlertContext';
+import { IncidentProvider } from './contexts/IncidentContext';
 import DashboardView from './views/DashboardView';
 import LoginView from './views/LoginView';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -72,7 +73,9 @@ export default function App() {
   return (
     <AuthProvider>
       <AlertProvider>
-        <AppRoutes />
+        <IncidentProvider>
+          <AppRoutes />
+        </IncidentProvider>
       </AlertProvider>
     </AuthProvider>
   );

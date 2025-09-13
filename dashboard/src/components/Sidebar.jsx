@@ -1,11 +1,13 @@
 import React from 'react';
-import { Shield, Map, AlertTriangle, BarChart2, Users, LogOut, Settings, UserCheck, Crown } from 'lucide-react';
+import { Shield, Map, AlertTriangle, BarChart2, Users, LogOut, Settings, UserCheck, Crown, FileText } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useAlert } from '../contexts/AlertContext';
+import { useIncident } from '../contexts/IncidentContext';
 
 export default function Sidebar({ currentView, setCurrentView, onLogout }) {
   const { user, hasPermission, hasRole } = useAuth();
   const { activeAlerts } = useAlert();
+  const { pendingCount } = useIncident();
 
   // Count only active and acknowledged alerts (not resolved or false alarms)
   const activeAlertCount = activeAlerts.filter(alert => 
@@ -33,8 +35,8 @@ export default function Sidebar({ currentView, setCurrentView, onLogout }) {
       permission: 'manage_alerts'
     },
     { 
-      name: 'Reports', 
-      icon: <Users size={20} />, 
+      name: 'Incident Reports', 
+      icon: <FileText size={20} />, 
       view: 'reports',
       permission: 'view_analytics'
     },
@@ -148,6 +150,11 @@ export default function Sidebar({ currentView, setCurrentView, onLogout }) {
             {item.view === 'alerts' && activeAlertCount > 0 && (
               <div className="bg-red-500 text-white text-xs rounded-full px-2 py-1 min-w-[20px] h-5 flex items-center justify-center">
                 {activeAlertCount}
+              </div>
+            )}
+            {item.view === 'reports' && pendingCount > 0 && (
+              <div className="bg-orange-500 text-white text-xs rounded-full px-2 py-1 min-w-[20px] h-5 flex items-center justify-center">
+                {pendingCount}
               </div>
             )}
           </button>
