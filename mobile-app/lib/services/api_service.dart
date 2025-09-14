@@ -6,11 +6,16 @@ class ApiService {
   // GCP App Engine URL - No hibernation, always fast!
   static const String _baseUrl = 'https://sih-2025-471306.el.r.appspot.com/api';
   
-  // HTTP client with timeout configuration
+  // HTTP client with connection pooling and timeout configuration
   static final http.Client _client = http.Client();
   
-  // Reduced timeout since GCP is always-on (no cold starts)
-  static const Duration _timeout = Duration(seconds: 30);
+  // Optimized timeout for better performance
+  static const Duration _timeout = Duration(seconds: 20);
+  static const Duration _shortTimeout = Duration(seconds: 10);
+  
+  // Connection retry configuration
+  static const int _maxRetries = 3;
+  static const Duration _retryDelay = Duration(seconds: 2);
   
   // Login method - simplified for GCP (no wake-up needed)
   Future<Map<String, dynamic>> login(String email, String password) async {
