@@ -7,9 +7,54 @@ const HighRiskZone = require('../models/HighRiskZone');
 // Get all registered tourists
 exports.getAllTourists = async (req, res) => {
   try {
-    const tourists = await Tourist.find();
-    res.status(200).json(tourists);
+    const tourists = await Tourist.find().lean(); // Use lean() for better performance
+    
+    // Normalize digitalId format for frontend compatibility
+    const normalizedTourists = tourists.map(tourist => {
+      try {
+        // Handle backward compatibility for digitalId
+        if (tourist.digitalId) {
+          // If digitalId is still a string (old format), convert to new format
+          if (typeof tourist.digitalId === 'string') {
+            tourist.digitalId = {
+              issuedDate: tourist.createdAt || new Date(),
+              expiryDate: tourist.idValidUntil,
+              status: (tourist.idValidUntil && new Date() > new Date(tourist.idValidUntil)) ? 'expired' : 'active',
+              idString: tourist.digitalId
+            };
+          }
+        } else {
+          // If digitalId is null/undefined, create a basic structure
+          tourist.digitalId = {
+            issuedDate: tourist.createdAt || new Date(),
+            expiryDate: tourist.idValidUntil,
+            status: (tourist.idValidUntil && new Date() > new Date(tourist.idValidUntil)) ? 'expired' : 'active',
+            idString: null
+          };
+        }
+        
+        // Ensure required fields exist
+        tourist.kycStatus = tourist.kycStatus || 'pending';
+        tourist.emergencyContacts = tourist.emergencyContacts || [];
+        tourist.idNumber = tourist.idNumber || '';
+        
+        return tourist;
+      } catch (normalizationError) {
+        console.error('Error normalizing tourist data:', normalizationError);
+        // Return tourist with minimal safe data
+        return {
+          ...tourist,
+          digitalId: null,
+          kycStatus: 'pending',
+          emergencyContacts: [],
+          idNumber: ''
+        };
+      }
+    });
+    
+    res.status(200).json(normalizedTourists);
   } catch (error) {
+    console.error('Error fetching tourists:', error);
     res.status(500).json({ message: 'Error fetching tourists', error: error.message });
   }
 };
@@ -32,9 +77,25 @@ exports.getTouristDetails = async (req, res) => {
         if (!tourist) {
             return res.status(404).json({ message: 'Tourist not found' });
         }
+        
         const alerts = await Alert.find({ tourist: id });
-        res.status(200).json({ tourist, alerts });
+        
+        // Normalize tourist data for frontend compatibility
+        const touristObj = tourist.toObject();
+        
+        // Handle backward compatibility for digitalId
+        if (touristObj.digitalId && typeof touristObj.digitalId === 'string') {
+          touristObj.digitalId = {
+            issuedDate: touristObj.createdAt || new Date(),
+            expiryDate: touristObj.idValidUntil,
+            status: new Date() > new Date(touristObj.idValidUntil) ? 'expired' : 'active',
+            idString: touristObj.digitalId
+          };
+        }
+        
+        res.status(200).json({ tourist: touristObj, alerts });
     } catch (error) {
+        console.error('Error fetching tourist details:', error);
         res.status(500).json({ message: 'Error fetching tourist details', error: error.message });
     }
 };

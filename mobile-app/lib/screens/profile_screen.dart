@@ -105,7 +105,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onTap: () {
                       if (!isKycValid) {
                         Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const KycPromptScreen()),
+                          MaterialPageRoute(
+                            builder: (_) => KycPromptScreen(tourist: widget.tourist),
+                          ),
                         );
                       }
                     },

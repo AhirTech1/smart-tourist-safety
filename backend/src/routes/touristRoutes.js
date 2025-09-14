@@ -13,4 +13,7 @@ router.post('/location/:id', touristController.updateLocation);
 // Route to trigger a panic alert
 router.post('/panic/:id', touristController.triggerPanic);
 
+// Route to update KYC information
+router.put('/kyc/:id', touristController.updateKyc);
+
 module.exports = router;

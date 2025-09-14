@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:smart_tourist_safety_app/screens/kyc_prompt_screen.dart';
+import 'package:smart_tourist_safety_app/screens/kyc_renewal_screen.dart';
 import 'package:smart_tourist_safety_app/services/api_service.dart';
 import 'package:smart_tourist_safety_app/theme/theme_notifier.dart';
 import 'alerts_screen.dart';
@@ -50,7 +51,11 @@ class _HomeScreenState extends State<HomeScreen> {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
-              Navigator.of(context).push(MaterialPageRoute(builder: (_) => const KycPromptScreen()));
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (_) => KycRenewalScreen(tourist: widget.tourist),
+                ),
+              );
             },
             child: const Text('Complete KYC'),
           ),

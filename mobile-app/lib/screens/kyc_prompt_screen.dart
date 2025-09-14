@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:smart_tourist_safety_app/screens/kyc_renewal_screen.dart';
 
 class KycPromptScreen extends StatelessWidget {
-  const KycPromptScreen({super.key});
+  final Map<String, dynamic> tourist;
+  
+  const KycPromptScreen({
+    super.key,
+    required this.tourist,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +26,11 @@ class KycPromptScreen extends StatelessWidget {
         TextButton(
           child: const Text('Complete KYC Now'),
           onPressed: () {
-            // TODO: Navigate to the KYC screen
             Navigator.of(context).pop();
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Navigate to KYC screen...')),
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => KycRenewalScreen(tourist: tourist),
+              ),
             );
           },
         ),

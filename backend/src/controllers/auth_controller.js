@@ -29,8 +29,11 @@ exports.register = async (req, res) => {
     const idValidUntil = new Date();
     idValidUntil.setDate(idValidUntil.getDate() + tripDuration);
 
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + tripDuration);
+
     // This is a placeholder for a blockchain ID generation call
-    const digitalId = `STS-${randomUUID()}`;
+    const digitalIdString = `STS-${randomUUID()}`;
 
     tourist = new Tourist({
       name,
@@ -42,7 +45,13 @@ exports.register = async (req, res) => {
       passportNumber,
       aadharNumber,
       emergencyContacts,
-      digitalId,
+      idNumber: req.body.idNumber || '', // Get from request body
+      digitalId: {
+        issuedDate: new Date(),
+        expiryDate: expiryDate,
+        status: 'active',
+        idString: digitalIdString
+      },
       idValidUntil,
       kycStatus: 'verified', // Assume KYC is verified upon registration for now
     });
@@ -85,27 +94,49 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
     
-    // Check if the digital ID is expired
-    if (new Date() > new Date(tourist.idValidUntil)) {
+    // Check if the digital ID is expired (handle both old and new format)
+    let currentKycStatus = tourist.kycStatus;
+    
+    // Handle backward compatibility for old digitalId format (string) vs new format (object)
+    if (tourist.digitalId) {
+      let expiryDate = null;
+      
+      // If digitalId is a string (old format), use idValidUntil
+      if (typeof tourist.digitalId === 'string') {
+        expiryDate = tourist.idValidUntil;
+      } 
+      // If digitalId is an object (new format), use digitalId.expiryDate
+      else if (tourist.digitalId.expiryDate) {
+        expiryDate = tourist.digitalId.expiryDate;
+      }
+      
+      if (expiryDate && new Date() > new Date(expiryDate)) {
+        currentKycStatus = 'expired';
         tourist.kycStatus = 'expired';
-        tourist.digitalId = null; // Destroy the ID
+        
+        // Update digitalId status if it's the new format
+        if (typeof tourist.digitalId === 'object' && tourist.digitalId !== null) {
+          tourist.digitalId.status = 'expired';
+        }
         await tourist.save();
+      }
     }
-
 
     res.status(200).json({
       message: 'Login successful',
       tourist: {
+        _id: tourist._id,
         id: tourist._id,
         name: tourist.name,
         email: tourist.email,
         phoneNumber: tourist.phoneNumber,
         digitalId: tourist.digitalId,
         idValidUntil: tourist.idValidUntil,
-        kycStatus: tourist.kycStatus,
+        kycStatus: currentKycStatus,
         emergencyContacts: tourist.emergencyContacts,
         tripDuration: tourist.tripDuration,
         tripItinerary: tourist.tripItinerary,
+        idNumber: tourist.idNumber,
       },
     });
   } catch (error) {

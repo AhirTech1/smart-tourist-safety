@@ -98,17 +98,42 @@ app.get('/', (req, res) => {
 });
 
 // Status route for monitoring
-app.get('/api/status', (req, res) => {
-  res.json({
-    success: true,
-    status: 'healthy',
-    database: isConnected ? 'connected' : 'disconnected',
-    timestamp: new Date().toISOString(),
-    services: {
-      ai: !!process.env.HUGGINGFACE_API_KEY,
-      mongodb: isConnected
+app.get('/api/status', async (req, res) => {
+  try {
+    // Test database connection
+    let dbStatus = 'disconnected';
+    let touristCount = 0;
+    
+    if (isConnected) {
+      try {
+        const Tourist = require('./models/tourist');
+        touristCount = await Tourist.countDocuments();
+        dbStatus = 'connected';
+      } catch (dbError) {
+        console.error('Database test failed:', dbError);
+        dbStatus = 'error';
+      }
     }
-  });
+    
+    res.json({
+      success: true,
+      status: 'healthy',
+      database: dbStatus,
+      touristCount: touristCount,
+      timestamp: new Date().toISOString(),
+      services: {
+        ai: !!process.env.HUGGINGFACE_API_KEY,
+        mongodb: isConnected
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      status: 'error',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
 });
 
 // Error handling middleware

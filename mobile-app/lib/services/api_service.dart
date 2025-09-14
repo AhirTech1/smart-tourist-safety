@@ -409,6 +409,55 @@ class ApiService {
     }
   }
 
+  // Update Tourist KYC information
+  Future<Map<String, dynamic>> updateTouristKyc({
+    required String touristId,
+    required String name,
+    required String phoneNumber,
+    required int tripDuration,
+    required String tripItinerary,
+    required String idNumber,
+    required List<Map<String, String>> emergencyContacts,
+  }) async {
+    try {
+      final fullUrl = '$_baseUrl/tourist/kyc/$touristId';
+      print('Updating tourist KYC to: $fullUrl');
+      
+      final response = await _client.put(
+        Uri.parse(fullUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'User-Agent': 'SmartTouristApp/1.0',
+        },
+        body: jsonEncode({
+          'name': name,
+          'phoneNumber': phoneNumber,
+          'tripDuration': tripDuration,
+          'tripItinerary': tripItinerary,
+          'idNumber': idNumber,
+          'emergencyContacts': emergencyContacts,
+          'kycRenewalDate': DateTime.now().toIso8601String(),
+        }),
+      ).timeout(_timeout);
+      
+      print('KYC update response status: ${response.statusCode}');
+      return _handleResponse(response);
+    } on SocketException catch (e) {
+      print('Network Error (SocketException): $e');
+      return {'error': true, 'message': 'No internet connection. Please check your network.'};
+    } on HttpException catch (e) {
+      print('HTTP Error: $e');
+      return {'error': true, 'message': 'Server connection failed. Please try again.'};
+    } on FormatException catch (e) {
+      print('Format Error: $e');
+      return {'error': true, 'message': 'Invalid server response format.'};
+    } catch (e) {
+      print('Unexpected Error on KYC update: $e');
+      return {'error': true, 'message': 'Could not update KYC information. Please try again later.'};
+    }
+  }
+
   // Trigger SOS/Panic alert with enhanced data
   Future<Map<String, dynamic>> triggerSOS({
     required String touristId,

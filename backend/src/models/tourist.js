@@ -37,6 +37,10 @@ const touristSchema = new mongoose.Schema({
     enum: ['pending', 'verified', 'rejected', 'expired'],
     default: 'pending',
   },
+  idNumber: {
+    type: String,
+    required: false, // Optional, can be passport, license, etc.
+  },
   passportNumber: {
     type: String,
   },
@@ -44,12 +48,15 @@ const touristSchema = new mongoose.Schema({
     type: String,
   },
   digitalId: {
-    type: String,
-    unique: true,
-    sparse: true, // Allows multiple null values
+    type: mongoose.Schema.Types.Mixed, // Allow both string (old format) and object (new format)
+    default: null,
   },
   idValidUntil: {
     type: Date,
+  },
+  lastUpdated: {
+    type: Date,
+    default: Date.now,
   },
   emergencyContacts: [emergencyContactSchema],
   deviceId: {

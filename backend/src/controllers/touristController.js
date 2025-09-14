@@ -104,3 +104,60 @@ exports.triggerPanic = async (req, res) => {
     res.status(500).json({ message: 'Error triggering panic alert', error: error.message });
   }
 };
+
+// Update tourist's KYC information
+exports.updateKyc = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { 
+      name, 
+      phoneNumber, 
+      tripDuration, 
+      tripItinerary, 
+      idNumber, 
+      emergencyContacts,
+      kycRenewalDate 
+    } = req.body;
+
+    const tourist = await Tourist.findById(id);
+
+    if (!tourist) {
+      return res.status(404).json({ message: 'Tourist not found' });
+    }
+
+    // Calculate new expiry date based on trip duration
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + tripDuration);
+
+    // Update tourist information
+    const updatedTourist = await Tourist.findByIdAndUpdate(
+      id,
+      {
+        name,
+        phoneNumber,
+        tripDuration,
+        tripItinerary,
+        idNumber,
+        emergencyContacts,
+        kycStatus: 'verified',
+        digitalId: {
+          issuedDate: kycRenewalDate || new Date(),
+          expiryDate: expiryDate,
+          status: 'active'
+        },
+        lastUpdated: new Date()
+      },
+      { new: true, runValidators: true }
+    );
+
+    res.status(200).json({ 
+      message: 'KYC updated successfully', 
+      tourist: updatedTourist 
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      message: 'Error updating KYC information', 
+      error: error.message 
+    });
+  }
+};
