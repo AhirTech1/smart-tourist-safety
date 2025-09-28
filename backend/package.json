@@ -23,6 +23,7 @@
   "author": "TeamEvolv",
   "license": "ISC",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@huggingface/inference": "^4.7.1",
     "axios": "^1.11.0",
     "bcryptjs": "^2.4.3",
@@ -30,7 +31,8 @@
     "dotenv": "^16.6.1",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^7.0.3"
+    "mongoose": "^7.0.3",
+    "natural": "^8.1.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

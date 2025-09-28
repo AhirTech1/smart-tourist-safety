@@ -50,6 +50,39 @@ class ApiService {
     }
   }
 
+  // Recommendation method - simplified for GCP (no wake-up needed)
+
+  Future<List<dynamic>> getRecommendations(Map<String, dynamic> userPreferences) async {
+    final response = await http.post(
+      Uri.parse('$_baseUrl/recommendations'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(userPreferences),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to get recommendations');
+    }
+  }
+
+  // Chatbot method - simplified for GCP (no wake-up needed)
+
+  Future<String> getChatbotResponse(String prompt) async {
+    final response = await http.post(
+      Uri.parse('$_baseUrl/chatbot'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'prompt': prompt}),
+    );
+
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
+      return body['response'];
+    } else {
+      throw Exception('Failed to get chatbot response');
+    }
+  }
+
   // Register method - simplified for GCP (no wake-up needed)
   Future<Map<String, dynamic>> register(String name, String email, String password, String phoneNumber) async {
     try {
@@ -85,6 +118,20 @@ class ApiService {
     } catch (e) {
       print('Unexpected Error on registration: $e');
       return {'error': true, 'message': 'Could not connect to the server. Please try again later.'};
+    }
+  }
+
+  Future<List<dynamic>> getPredictedHighRiskZones(double lat, double lon) async {
+    final response = await http.post(
+      Uri.parse('$_baseUrl/predict-zones'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'lat': lat, 'lon': lon}),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to get predicted high risk zones');
     }
   }
 

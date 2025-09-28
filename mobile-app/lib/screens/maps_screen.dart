@@ -108,6 +108,20 @@ class _MapsScreenState extends State<MapsScreen> {
     _loadEmergencyServices();
   }
 
+  // In _MapsScreenState
+
+  Future<void> _getAndDisplayPredictedZones() async {
+    try {
+      final zones = await ApiService().getPredictedHighRiskZones(
+        _currentPosition!.latitude,
+        _currentPosition!.longitude,
+      );
+      // ... (logic to display the zones on the map)
+    } catch (e) {
+      // Handle error
+    }
+  }
+
   Future<void> _loadHighRiskZonesFromBackend() async {
     try {
       final highRiskZones = await _apiService.getHighRiskZones();

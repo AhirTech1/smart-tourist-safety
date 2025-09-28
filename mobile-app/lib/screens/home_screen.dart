@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:smart_tourist_safety_app/screens/kyc_prompt_screen.dart';
 import 'package:smart_tourist_safety_app/screens/kyc_renewal_screen.dart';
 import 'package:smart_tourist_safety_app/services/api_service.dart';
 import 'package:smart_tourist_safety_app/theme/theme_notifier.dart';
@@ -13,6 +12,8 @@ import 'profile_screen.dart';
 import 'report_incident_screen.dart';
 import 'safety_tips_screen.dart';
 import 'sos_confirmation_screen.dart';
+import 'package:smart_tourist_safety_app/screens/chatbot_screen.dart';
+import 'package:smart_tourist_safety_app/screens/recommendations_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final Map<String, dynamic> tourist;
@@ -335,6 +336,61 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Maps'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text('Menu', style: TextStyle(color: Colors.white, fontSize: 24)),
+            ),
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text('Home'),
+              onTap: () {
+                Navigator.pop(context); // Close the drawer
+              },
+            ),
+            // ... other ListTiles for existing screens
+
+            // START: New Code to Add
+            const Divider(), // Optional: for visual separation
+            ListTile(
+              leading: const Icon(Icons.assistant),
+              title: const Text('AI Safety Assistant'),
+              onTap: () {
+                Navigator.pop(context); // Close the drawer first
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ChatbotScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.thumb_up),
+              title: const Text('Safe Recommendations'),
+              onTap: () {
+                Navigator.pop(context); // Close the drawer first
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const RecommendationsScreen()),
+                );
+              },
+            ),
+            // END: New Code to Add
+
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Logout'),
+              onTap: () {
+                // Your logout logic
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

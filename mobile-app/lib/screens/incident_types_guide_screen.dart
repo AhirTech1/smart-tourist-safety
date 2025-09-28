@@ -230,7 +230,7 @@ class IncidentTypesGuideScreen extends StatelessWidget {
           const SizedBox(height: 20),
           
           // Incident Types
-          ...._incidentGuides.map((guide) => _buildIncidentGuide(context, guide)).toList(),
+          ..._incidentGuides.map((guide) => _buildIncidentGuide(context, guide)).toList(),
           
           const SizedBox(height: 20),
           

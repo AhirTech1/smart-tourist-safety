@@ -14,6 +14,7 @@
         "geolocator",
         "google_fonts",
         "google_maps_flutter",
+        "google_place",
         "http",
         "intl",
         "provider",
@@ -22,29 +23,16 @@
       "devDependencies": [
         "flutter_gen",
         "flutter_lints",
-        "flutter_test",
-        "intl_translation"
+        "flutter_test"
       ]
     },
     {
       "name": "flutter_gen",
-      "version": "5.9.0",
+      "version": "5.12.0",
       "dependencies": [
         "args",
-        "flutter_gen_core"
-      ]
-    },
-    {
-      "name": "intl_translation",
-      "version": "0.20.1",
-      "dependencies": [
-        "analyzer",
-        "args",
-        "dart_style",
-        "intl",
-        "package_config",
-        "path",
-        "pub_semver"
+        "flutter_gen_core",
+        "logging"
       ]
     },
     {
@@ -73,6 +61,13 @@
       ]
     },
     {
+      "name": "google_place",
+      "version": "0.4.7",
+      "dependencies": [
+        "http"
+      ]
+    },
+    {
       "name": "url_launcher",
       "version": "6.3.2",
       "dependencies": [
@@ -88,11 +83,12 @@
     },
     {
       "name": "geolocator",
-      "version": "10.1.1",
+      "version": "14.0.2",
       "dependencies": [
         "flutter",
         "geolocator_android",
         "geolocator_apple",
+        "geolocator_linux",
         "geolocator_platform_interface",
         "geolocator_web",
         "geolocator_windows"
@@ -100,7 +96,7 @@
     },
     {
       "name": "google_maps_flutter",
-      "version": "2.12.3",
+      "version": "2.13.1",
       "dependencies": [
         "flutter",
         "google_maps_flutter_android",
@@ -111,28 +107,27 @@
     },
     {
       "name": "http",
-      "version": "1.5.0",
+      "version": "0.13.6",
       "dependencies": [
         "async",
         "http_parser",
-        "meta",
-        "web"
+        "meta"
       ]
     },
     {
       "name": "flutter_svg",
-      "version": "2.2.0",
+      "version": "1.1.6",
       "dependencies": [
         "flutter",
-        "http",
-        "vector_graphics",
-        "vector_graphics_codec",
-        "vector_graphics_compiler"
+        "meta",
+        "path_drawing",
+        "vector_math",
+        "xml"
       ]
     },
     {
       "name": "google_fonts",
-      "version": "6.3.1",
+      "version": "4.0.4",
       "dependencies": [
         "crypto",
         "flutter",
@@ -185,13 +180,18 @@
       ]
     },
     {
+      "name": "logging",
+      "version": "1.3.0",
+      "dependencies": []
+    },
+    {
       "name": "args",
       "version": "2.7.0",
       "dependencies": []
     },
     {
       "name": "flutter_gen_core",
-      "version": "5.9.0",
+      "version": "5.12.0",
       "dependencies": [
         "archive",
         "args",
@@ -200,63 +200,16 @@
         "dart_style",
         "dartx",
         "glob",
+        "image",
         "image_size_getter",
         "json_annotation",
+        "logging",
         "meta",
         "mime",
         "path",
         "pub_semver",
         "vector_graphics_compiler",
         "xml",
-        "yaml"
-      ]
-    },
-    {
-      "name": "pub_semver",
-      "version": "2.2.0",
-      "dependencies": [
-        "collection"
-      ]
-    },
-    {
-      "name": "path",
-      "version": "1.9.1",
-      "dependencies": []
-    },
-    {
-      "name": "package_config",
-      "version": "2.2.0",
-      "dependencies": [
-        "path"
-      ]
-    },
-    {
-      "name": "dart_style",
-      "version": "2.3.6",
-      "dependencies": [
-        "analyzer",
-        "args",
-        "collection",
-        "path",
-        "pub_semver",
-        "source_span"
-      ]
-    },
-    {
-      "name": "analyzer",
-      "version": "6.4.1",
-      "dependencies": [
-        "_fe_analyzer_shared",
-        "collection",
-        "convert",
-        "crypto",
-        "glob",
-        "meta",
-        "package_config",
-        "path",
-        "pub_semver",
-        "source_span",
-        "watcher",
         "yaml"
       ]
     },
@@ -317,6 +270,11 @@
         "clock",
         "collection"
       ]
+    },
+    {
+      "name": "path",
+      "version": "1.9.1",
+      "dependencies": []
     },
     {
       "name": "matcher",
@@ -396,10 +354,22 @@
     },
     {
       "name": "url_launcher_android",
-      "version": "6.3.21",
+      "version": "6.3.22",
       "dependencies": [
         "flutter",
         "url_launcher_platform_interface"
+      ]
+    },
+    {
+      "name": "geolocator_linux",
+      "version": "0.2.3",
+      "dependencies": [
+        "dbus",
+        "flutter",
+        "geoclue",
+        "geolocator_platform_interface",
+        "gsettings",
+        "package_info_plus"
       ]
     },
     {
@@ -412,11 +382,12 @@
     },
     {
       "name": "geolocator_web",
-      "version": "2.2.1",
+      "version": "4.1.3",
       "dependencies": [
         "flutter",
         "flutter_web_plugins",
-        "geolocator_platform_interface"
+        "geolocator_platform_interface",
+        "web"
       ]
     },
     {
@@ -429,7 +400,7 @@
     },
     {
       "name": "geolocator_android",
-      "version": "4.6.2",
+      "version": "5.0.2",
       "dependencies": [
         "flutter",
         "geolocator_platform_interface",
@@ -449,7 +420,7 @@
     },
     {
       "name": "google_maps_flutter_web",
-      "version": "0.5.13",
+      "version": "0.5.14+2",
       "dependencies": [
         "collection",
         "flutter",
@@ -491,11 +462,6 @@
       ]
     },
     {
-      "name": "web",
-      "version": "1.1.1",
-      "dependencies": []
-    },
-    {
       "name": "http_parser",
       "version": "4.1.2",
       "dependencies": [
@@ -514,29 +480,29 @@
       ]
     },
     {
-      "name": "vector_graphics_compiler",
-      "version": "1.1.19",
+      "name": "xml",
+      "version": "6.6.1",
       "dependencies": [
-        "args",
+        "collection",
         "meta",
-        "path",
-        "path_parsing",
-        "vector_graphics_codec",
-        "xml"
+        "petitparser"
       ]
     },
     {
-      "name": "vector_graphics_codec",
-      "version": "1.1.13",
-      "dependencies": []
-    },
-    {
-      "name": "vector_graphics",
-      "version": "1.1.19",
+      "name": "path_drawing",
+      "version": "1.0.1",
       "dependencies": [
         "flutter",
-        "http",
-        "vector_graphics_codec"
+        "meta",
+        "path_parsing",
+        "vector_math"
+      ]
+    },
+    {
+      "name": "crypto",
+      "version": "3.0.6",
+      "dependencies": [
+        "typed_data"
       ]
     },
     {
@@ -549,13 +515,6 @@
         "path_provider_linux",
         "path_provider_platform_interface",
         "path_provider_windows"
-      ]
-    },
-    {
-      "name": "crypto",
-      "version": "3.0.6",
-      "dependencies": [
-        "typed_data"
       ]
     },
     {
@@ -583,6 +542,15 @@
       "dependencies": []
     },
     {
+      "name": "image",
+      "version": "4.5.4",
+      "dependencies": [
+        "archive",
+        "meta",
+        "xml"
+      ]
+    },
+    {
       "name": "image_size_getter",
       "version": "2.4.1",
       "dependencies": [
@@ -592,12 +560,45 @@
       ]
     },
     {
+      "name": "vector_graphics_compiler",
+      "version": "1.1.19",
+      "dependencies": [
+        "args",
+        "meta",
+        "path",
+        "path_parsing",
+        "vector_graphics_codec",
+        "xml"
+      ]
+    },
+    {
+      "name": "pub_semver",
+      "version": "2.2.0",
+      "dependencies": [
+        "collection"
+      ]
+    },
+    {
       "name": "archive",
       "version": "4.0.7",
       "dependencies": [
         "crypto",
         "path",
         "posix"
+      ]
+    },
+    {
+      "name": "dart_style",
+      "version": "3.1.2",
+      "dependencies": [
+        "analyzer",
+        "args",
+        "collection",
+        "package_config",
+        "path",
+        "pub_semver",
+        "source_span",
+        "yaml"
       ]
     },
     {
@@ -636,15 +637,6 @@
       ]
     },
     {
-      "name": "xml",
-      "version": "6.6.1",
-      "dependencies": [
-        "collection",
-        "meta",
-        "petitparser"
-      ]
-    },
-    {
       "name": "mime",
       "version": "2.0.0",
       "dependencies": []
@@ -659,37 +651,6 @@
       ]
     },
     {
-      "name": "source_span",
-      "version": "1.10.1",
-      "dependencies": [
-        "collection",
-        "path",
-        "term_glyph"
-      ]
-    },
-    {
-      "name": "watcher",
-      "version": "1.1.3",
-      "dependencies": [
-        "async",
-        "path"
-      ]
-    },
-    {
-      "name": "convert",
-      "version": "3.1.2",
-      "dependencies": [
-        "typed_data"
-      ]
-    },
-    {
-      "name": "_fe_analyzer_shared",
-      "version": "67.0.0",
-      "dependencies": [
-        "meta"
-      ]
-    },
-    {
       "name": "leak_tracker_testing",
       "version": "3.0.2",
       "dependencies": [
@@ -700,7 +661,7 @@
     },
     {
       "name": "leak_tracker",
-      "version": "11.0.1",
+      "version": "11.0.2",
       "dependencies": [
         "clock",
         "collection",
@@ -722,12 +683,26 @@
       ]
     },
     {
+      "name": "source_span",
+      "version": "1.10.1",
+      "dependencies": [
+        "collection",
+        "path",
+        "term_glyph"
+      ]
+    },
+    {
       "name": "boolean_selector",
       "version": "2.1.2",
       "dependencies": [
         "source_span",
         "string_scanner"
       ]
+    },
+    {
+      "name": "web",
+      "version": "1.1.1",
+      "dependencies": []
     },
     {
       "name": "flutter_web_plugins",
@@ -741,6 +716,48 @@
       "version": "2.1.8",
       "dependencies": [
         "meta"
+      ]
+    },
+    {
+      "name": "package_info_plus",
+      "version": "8.3.1",
+      "dependencies": [
+        "clock",
+        "ffi",
+        "flutter",
+        "flutter_web_plugins",
+        "http",
+        "meta",
+        "package_info_plus_platform_interface",
+        "path",
+        "web",
+        "win32"
+      ]
+    },
+    {
+      "name": "gsettings",
+      "version": "0.2.8",
+      "dependencies": [
+        "dbus",
+        "xdg_directories"
+      ]
+    },
+    {
+      "name": "geoclue",
+      "version": "0.1.1",
+      "dependencies": [
+        "dbus",
+        "meta"
+      ]
+    },
+    {
+      "name": "dbus",
+      "version": "0.7.11",
+      "dependencies": [
+        "args",
+        "ffi",
+        "meta",
+        "xml"
       ]
     },
     {
@@ -768,7 +785,7 @@
     },
     {
       "name": "google_maps",
-      "version": "8.1.1",
+      "version": "8.2.0",
       "dependencies": [
         "meta",
         "web"
@@ -786,6 +803,14 @@
       "version": "1.4.0",
       "dependencies": [
         "collection"
+      ]
+    },
+    {
+      "name": "petitparser",
+      "version": "7.0.1",
+      "dependencies": [
+        "collection",
+        "meta"
       ]
     },
     {
@@ -848,12 +873,42 @@
       "dependencies": []
     },
     {
+      "name": "vector_graphics_codec",
+      "version": "1.1.13",
+      "dependencies": []
+    },
+    {
       "name": "posix",
       "version": "6.0.3",
       "dependencies": [
         "ffi",
         "meta",
         "path"
+      ]
+    },
+    {
+      "name": "package_config",
+      "version": "2.2.0",
+      "dependencies": [
+        "path"
+      ]
+    },
+    {
+      "name": "analyzer",
+      "version": "8.2.0",
+      "dependencies": [
+        "_fe_analyzer_shared",
+        "collection",
+        "convert",
+        "crypto",
+        "glob",
+        "meta",
+        "package_config",
+        "path",
+        "pub_semver",
+        "source_span",
+        "watcher",
+        "yaml"
       ]
     },
     {
@@ -872,17 +927,38 @@
       ]
     },
     {
-      "name": "petitparser",
-      "version": "7.0.1",
-      "dependencies": [
-        "collection",
-        "meta"
-      ]
-    },
-    {
       "name": "vm_service",
       "version": "15.0.2",
       "dependencies": []
+    },
+    {
+      "name": "win32",
+      "version": "5.14.0",
+      "dependencies": [
+        "ffi"
+      ]
+    },
+    {
+      "name": "package_info_plus_platform_interface",
+      "version": "3.2.1",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "plugin_platform_interface"
+      ]
+    },
+    {
+      "name": "ffi",
+      "version": "2.1.4",
+      "dependencies": []
+    },
+    {
+      "name": "xdg_directories",
+      "version": "1.1.0",
+      "dependencies": [
+        "meta",
+        "path"
+      ]
     },
     {
       "name": "fixnum",
@@ -903,21 +979,30 @@
       ]
     },
     {
-      "name": "ffi",
-      "version": "2.1.4",
-      "dependencies": []
-    },
-    {
       "name": "platform",
       "version": "3.1.6",
       "dependencies": []
     },
     {
-      "name": "xdg_directories",
-      "version": "1.1.0",
+      "name": "watcher",
+      "version": "1.1.3",
       "dependencies": [
-        "meta",
+        "async",
         "path"
+      ]
+    },
+    {
+      "name": "convert",
+      "version": "3.1.2",
+      "dependencies": [
+        "typed_data"
+      ]
+    },
+    {
+      "name": "_fe_analyzer_shared",
+      "version": "89.0.0",
+      "dependencies": [
+        "meta"
       ]
     },
     {

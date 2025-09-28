@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_webservice/places.dart';
+import 'package:google_place/google_place.dart';
 import 'package:geolocator/geolocator.dart';
 
 class LocalAttractionsScreen extends StatefulWidget {
@@ -10,8 +10,8 @@ class LocalAttractionsScreen extends StatefulWidget {
 }
 
 class _LocalAttractionsScreenState extends State<LocalAttractionsScreen> {
-  final places = GoogleMapsPlaces(apiKey: "AIzaSyBXg73KaiV_Dgr33WSGhCvnG7C1sceWbgc");
-  List<PlacesSearchResult> _attractions = [];
+  final googlePlace = GooglePlace("YOUR_API_KEY_HERE"); // Replace with your key
+  List<SearchResult> _attractions = [];
   bool _isLoading = true;
 
   @override
@@ -32,14 +32,19 @@ class _LocalAttractionsScreenState extends State<LocalAttractionsScreen> {
       }
 
       final position = await Geolocator.getCurrentPosition();
-      final location = Location(lat: position.latitude, lng: position.longitude);
-      final result = await places.searchNearbyWithRadius(location, 1500, type: "tourist_attraction");
+      final result = await googlePlace.search.getNearBySearch(
+        Location(lat: position.latitude, lng: position.longitude),
+        1500,
+        type: "tourist_attraction",
+      );
 
-      if (result.status == "OK") {
+      if (result != null && result.results != null) {
         setState(() {
-          _attractions = result.results;
+          _attractions = result.results!;
           _isLoading = false;
         });
+      } else {
+        setState(() => _isLoading = false);
       }
     } catch (e) {
       setState(() => _isLoading = false);
@@ -55,16 +60,18 @@ class _LocalAttractionsScreenState extends State<LocalAttractionsScreen> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: _attractions.length,
-              itemBuilder: (context, index) {
-                final attraction = _attractions[index];
-                return ListTile(
-                  title: Text(attraction.name),
-                  subtitle: Text(attraction.vicinity ?? ''),
-                );
-              },
-            ),
+          : _attractions.isEmpty
+              ? const Center(child: Text('No attractions found'))
+              : ListView.builder(
+                  itemCount: _attractions.length,
+                  itemBuilder: (context, index) {
+                    final attraction = _attractions[index];
+                    return ListTile(
+                      title: Text(attraction.name ?? 'Unknown'),
+                      subtitle: Text(attraction.vicinity ?? ''),
+                    );
+                  },
+                ),
     );
   }
 }

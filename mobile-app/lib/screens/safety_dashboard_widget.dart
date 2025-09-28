@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
+import 'package:smart_tourist_safety_app/screens/chatbot_screen.dart';
+import 'package:smart_tourist_safety_app/screens/recommendations_screen.dart';
 
 class SafetyDashboardWidget extends StatefulWidget {
   const SafetyDashboardWidget({super.key});
@@ -146,6 +148,30 @@ class _SafetyDashboardWidgetState extends State<SafetyDashboardWidget> {
                   ),
                 ],
               ),
+            ),
+
+            const Divider(), // Optional: for visual separation
+            ListTile(
+              leading: const Icon(Icons.assistant),
+              title: const Text('AI Safety Assistant'),
+              onTap: () {
+                Navigator.pop(context); // Close the drawer first
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ChatbotScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.thumb_up),
+              title: const Text('Safe Recommendations'),
+              onTap: () {
+                Navigator.pop(context); // Close the drawer first
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const RecommendationsScreen()),
+                );
+              },
             ),
           ],
         ),

@@ -3,6 +3,36 @@
 const Incident = require('../models/Incident');
 const User = require('../models/User');
 
+const natural = require('natural');
+const classifier = new natural.BayesClassifier();
+
+// You would train this with your own data
+classifier.addDocument('My wallet was stolen', 'theft');
+classifier.addDocument('Someone grabbed my bag', 'theft');
+classifier.addDocument('I was pushed and my phone was taken', 'robbery');
+classifier.addDocument('I feel unsafe, someone is following me', 'harassment');
+classifier.addDocument('I need a doctor, I fell down', 'medical');
+classifier.train();
+
+exports.createIncident = async (req, res) => {
+    try {
+        const { description, location } = req.body;
+        const incidentType = classifier.classify(description);
+
+        const newIncident = new Incident({
+            description,
+            location,
+            incidentType, // The auto-classified type
+            // ... other incident fields
+        });
+
+        await newIncident.save();
+        res.status(201).json(newIncident);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // Report a new incident
 exports.reportIncident = async (req, res) => {
   try {
